@@ -36,8 +36,8 @@ auto_select(bool is_auton) {
       if (is_auton) double_steal();
       break;
     case 1: // Auto 2
-      pros::lcd::set_text(1, "Auton 1");
-      if (is_auton) auto_1();
+      pros::lcd::set_text(1, "Steal One");
+      if (is_auton) steal_one();
       break;
     case 2: // Auto 3
       pros::lcd::set_text(1, "Auton 2");
@@ -203,8 +203,6 @@ autonomous() {
   zero_mogo();
   set_drive_brake(MOTOR_BRAKE_HOLD);
   drive_pid.resume();
-
-  //Hello I've added something :)
 
   auto_select(true);
 }
