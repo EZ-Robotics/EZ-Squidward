@@ -40,7 +40,7 @@ auto_select(bool is_auton) {
       if (is_auton) test_double_steal();
       break;
     case 2: // Auto 3
-      pros::lcd::set_text(1, "Steal One2");
+      pros::lcd::set_text(1, "Steal One");
       if (is_auton) steal_one();
       break;
     case 3: // Auto 4

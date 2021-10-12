@@ -178,12 +178,13 @@ void test_double_steal() {
   claw_down();
 
   // Drive back with goal
-  set_drive_pid(drive, -36, 70, true);
+  set_drive_pid(drive, -36, DRIVE_SPEED, true);
   // Release goal during drive back
-  wait_until(-27);
-  set_max_speed(DRIVE_SPEED);
+  //wait_until(-27);
+  //set_max_speed(DRIVE_SPEED);
   // claw_up();
   wait_drive();
+  pros::delay(250);
 
   // Turn to face alliance goal
   set_drive_pid(turn, -90, TURN_SPEED);
@@ -193,11 +194,11 @@ void test_double_steal() {
   // Drive into goal
   set_drive_pid(drive, -19, 80, true);
   wait_drive();
+  mogo_down(true);
 
   /////
 
   // Drive forward a little
-  mogo_down(true);
   set_drive_pid(drive, 10, DRIVE_SPEED);
   wait_drive();
 
