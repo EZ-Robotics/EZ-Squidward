@@ -2,6 +2,7 @@
 
 const int LIFT_DOWN = 0;
 const int LIFT_LIL_DOWN = 100;
+const int LIFT_DOWN_BIG = 200;
 const int LIFT_UP   = 850;
 const int LIFT_MID  = 700;
 
@@ -17,6 +18,7 @@ bool is_in = false;
 bool is_lil_in = false;
 bool is_mid = false;
 bool is_down = false;
+bool is_down_in = false;
 
 
 pros::Motor lift(1, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES);
@@ -70,6 +72,7 @@ bool timeout(int target, int vel, int current) {
 
 void
 lift_down (bool hold) {
+  //printf("lift down\n");
   set_lift_position(LIFT_DOWN, MAX_SPEED);
   is_in = timeout(LIFT_DOWN, get_lift_vel(), get_lift());
 
@@ -82,7 +85,8 @@ lift_down (bool hold) {
 }
 
 void
-lift_lil_down (bool hold) {
+lift_lil_down(bool hold) {
+  //printf("lift lil down\n");
   set_lift_position(LIFT_LIL_DOWN, MAX_SPEED);
   is_lil_in = timeout(LIFT_LIL_DOWN, get_lift_vel(), get_lift());
 
@@ -90,12 +94,28 @@ lift_lil_down (bool hold) {
     b_lift_up = true;
     is_at_down = false;
     pros::delay(DELAY_TIME);
-    lift_down(!is_lil_in);
+    lift_lil_down(!is_lil_in);
+  }
+}
+
+
+void
+lift_down_big (bool hold) {
+  //printf("lift down big\n");
+  set_lift_position(LIFT_DOWN_BIG, MAX_SPEED);
+  is_down_in = timeout(LIFT_DOWN_BIG, get_lift_vel(), get_lift());
+
+  if (hold) {
+    b_lift_up = true;
+    is_at_down = false;
+    pros::delay(DELAY_TIME);
+    lift_down_big(!is_down_in);
   }
 }
 
 void
 lift_up(bool hold) {
+  //printf("lift up\n");
   set_lift_position(LIFT_UP, MAX_SPEED);
   is_down = timeout(LIFT_UP, get_lift_vel(), get_lift());
 
@@ -108,6 +128,7 @@ lift_up(bool hold) {
 
 void
 lift_mid(bool hold) {
+  //printf("lift mid\n");
   set_lift_position(LIFT_MID, MAX_SPEED);
   is_mid = timeout(LIFT_MID, get_lift_vel(), get_lift());
 

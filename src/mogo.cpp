@@ -23,7 +23,7 @@ pros::Motor mogo(10, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES);
 
 void set_mogo(int input)  { mogo = input; }
 
-void zero_mogo()     { mogo.tare_position(); }
+void zero_mogo()    { mogo.tare_position(); }
 int  get_mogo()     { return mogo.get_position(); }
 int  get_mogo_vel() { return mogo.get_actual_velocity(); }
 

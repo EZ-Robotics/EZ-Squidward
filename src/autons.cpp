@@ -168,9 +168,9 @@ void test_double_steal() {
   wait_drive();
 
   // Drive towards center goal
-  set_drive_pid(drive, 49, 127);
+  set_drive_pid(drive, 51, 127);
   lift_down(true);
-  wait_until(42);
+  wait_until(40);
   set_max_speed(40);
   wait_drive();
 
@@ -178,10 +178,11 @@ void test_double_steal() {
   claw_down();
 
   // Drive back with goal
-  set_drive_pid(drive, -36, DRIVE_SPEED, true);
+  set_drive_pid(drive, -38, 127, true);
   // Release goal during drive back
-  //wait_until(-27);
-  //set_max_speed(DRIVE_SPEED);
+  wait_until(-27);
+  set_max_speed(60);
+  lift_lil_down(true);
   // claw_up();
   wait_drive();
   pros::delay(250);
@@ -198,24 +199,31 @@ void test_double_steal() {
 
   /////
 
+  /*
   // Drive forward a little
-  set_drive_pid(drive, 10, DRIVE_SPEED);
+  set_drive_pid(drive, 5, DRIVE_SPEED);
   wait_drive();
+  */
 
   // Turn to corner
-  set_drive_pid(turn, -210, TURN_SPEED);
-  lift_lil_down(true);
+  set_drive_pid(l_swing, -180, TURN_SPEED);
   wait_drive();
 
   // Drive into corner
-  set_drive_pid(drive, 10, DRIVE_SPEED);
+  set_drive_pid(drive, 17, DRIVE_SPEED, true);
   wait_drive();
 
   // Release goal
+  pros::delay(100);
+  lift_down(true);
   claw_up();
+  pros::delay(500);
 
   // Drive away
-  set_drive_pid(drive, -5, DRIVE_SPEED);
+  set_drive_pid(drive, -27, DRIVE_SPEED, true);
+  wait_drive();
+
+  set_drive_pid(turn, -360, TURN_SPEED);
   wait_drive();
 
   /////
@@ -269,12 +277,119 @@ void steal_one() {
   claw_down();
 
   // Turn 180
-  set_drive_pid(turn, 180, TURN_SPEED);
+  set_drive_pid(turn, -180, TURN_SPEED);
   wait_drive();
 
   // Drive back with goal
-  set_drive_pid(drive, 36, 127, true);
+  set_drive_pid(drive, 27, 127, true);
+  lift_lil_down(true);
+  wait_until(20);
+  set_max_speed(DRIVE_SPEED);
+  mogo_mid(true);
   wait_drive();
+
+  set_drive_pid(turn, -90, TURN_SPEED, true);
+  wait_drive();
+
+  set_drive_pid(drive, -14, DRIVE_SPEED, true);
+  wait_drive();
+  mogo_down(true);
+
+  set_drive_pid(l_swing, -180, TURN_SPEED, true);
+  wait_drive();
+
+  // Drive into corner
+  set_drive_pid(drive, 17, DRIVE_SPEED, true);
+  wait_drive();
+
+  // Release goal
+  pros::delay(100);
+  lift_down(true);
+  claw_up();
+  pros::delay(500);
+
+  // Drive away
+  set_drive_pid(drive, -27, DRIVE_SPEED, true);
+  wait_drive();
+
+  set_drive_pid(turn, -360, TURN_SPEED);
+  wait_drive();
+
+}
+
+
+
+
+void plat_down_center_hit() {
+
+  set_drive_pid(turn, 12, TURN_SPEED);
+  lift_down(true);
+  wait_drive();
+
+  set_drive_pid(drive, 56, 127);
+  wait_until(42);
+  claw_down();
+  set_max_speed(DRIVE_SPEED);
+  wait_drive();
+
+  set_drive_pid(l_swing, 90, TURN_SPEED);
+  wait_until(45);
+  lift_lil_down(true);
+  wait_drive();
+
+  set_drive_pid(drive, 62, DRIVE_SPEED, true);
+  wait_drive();
+
+  set_drive_pid(drive, -12, DRIVE_SPEED);
+  lift_down(true);
+  wait_drive();
+
+  //set_drive_pid(l_swing, 45, TURN_SPEED);
+  //wait_drive();
+
+}
+
+
+
+
+
+void plat_down_center() {
+
+  set_drive_pid(turn, 12, TURN_SPEED);
+  lift_down(true);
+  wait_drive();
+
+  set_drive_pid(drive, 58, 127);
+  wait_until(42);
+  claw_down();
+  set_max_speed(DRIVE_SPEED);
+  wait_drive();
+
+  set_drive_pid(drive, -46, 127);
+  wait_until(-24);
+  set_max_speed(DRIVE_SPEED);
+  claw_up();
+  wait_drive();
+
+  set_drive_pid(turn, -48, TURN_SPEED);
+  wait_drive();
+
+  mogo_mid(true);
+
+  set_drive_pid(drive, -11, 80);
+  wait_drive();
+
+  mogo_down(true);
+
+  set_drive_pid(drive, 28, DRIVE_SPEED, true);
+  wait_drive();
+
+  set_drive_pid(turn, 0, TURN_SPEED);
+  wait_drive();
+
+  set_drive_pid(drive, 14, DRIVE_SPEED, true);
+  wait_drive();
+
 
 }
 

@@ -544,7 +544,7 @@ wait_until(int input) {
 
       // Break the loop once target is passed
       if (sgn(l_error)==l_sgn && sgn(r_error)==r_sgn) {
-        run = false; // this makes sure that the following else if is rnu after the sgn is flipped
+        run = true; // this makes sure that the following else if is rnu after the sgn is flipped
       }
       else if (sgn(l_error)!=l_sgn && sgn(r_error)!=r_sgn) {
         printf("Drive Wait Until Completed- Error Sgn Flipped\n");

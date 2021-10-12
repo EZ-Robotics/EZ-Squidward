@@ -20,7 +20,7 @@ disable_all_tasks() {
  * When is_auton is true, the autonomous mode will run.  Otherwise, it will only
  * print to brain.
  */
-const int num_of_pages = 6; // Number of pages
+const int num_of_pages = 4; // Number of pages
 int current_page = 0;
 
 void
@@ -28,32 +28,28 @@ auto_select(bool is_auton) {
   for (int i=0; i<7; i++)
     pros::lcd::clear_line(i);
 
-  pros::lcd::set_text(0, "Page "+std::to_string(current_page+1));
+  pros::lcd::set_text(7, ""+std::to_string(current_page+1));
 
   switch (current_page) {
     case 0: // Auto 1
-      pros::lcd::set_text(1, "Double Steal");
-      if (is_auton) double_steal();
-      break;
-    case 1: // Auto 2
-      pros::lcd::set_text(1, "Test Double Steal");
+      pros::lcd::set_text(0, "Double Center Steal");
+      pros::lcd::set_text(5, "Starting: Plat Up");
       if (is_auton) test_double_steal();
       break;
-    case 2: // Auto 3
-      pros::lcd::set_text(1, "Steal One");
+    case 1: // Auto 3
+      pros::lcd::set_text(0, "Center Rush");
+      pros::lcd::set_text(5, "Starting: Plat Up");
       if (is_auton) steal_one();
       break;
-    case 3: // Auto 4
-      pros::lcd::set_text(1, "Far Double");
-      if (is_auton) auto_3();
+    case 2: // Auto 4
+      pros::lcd::set_text(0, "Center Line RAM");
+      pros::lcd::set_text(5, "Starting: Plat Down");
+      if (is_auton) plat_down_center_hit();
       break;
-    case 4: // Auto 5
-      pros::lcd::set_text(1, "Auton 4");
-      if (is_auton) auto_4();
-      break;
-    case 5: // Auto 6
-      pros::lcd::set_text(1, "Auton 5");
-      if (is_auton) auto_5();
+    case 3: // Auto 5
+      pros::lcd::set_text(0, "Center Rush");
+      pros::lcd::set_text(5, "Starting: Plat Down");
+      if (is_auton) plat_down_center();
       break;
 
     default:
@@ -134,9 +130,6 @@ initialize() {
   print_ez_template();
   pros::delay(500);
 
-  zero_lift();
-  zero_mogo();
-
   if (!IS_SD_CARD) printf("No SD Card Found!\n");
 
   disable_all_tasks();
@@ -153,6 +146,9 @@ initialize() {
   if(!imu_calibrate()) {
     pros::lcd::set_text(7, "IMU failed to calibrate!");
   }
+
+  zero_lift();
+  zero_mogo();
 
   chassis_motor_init();
 }

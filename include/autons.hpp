@@ -5,6 +5,8 @@ void reset_constants();
 void double_steal();
 void test_double_steal();
 void steal_one();
+void plat_down_center_hit();
+void plat_down_center();
 
 void auto_1();
 void auto_2();

@@ -11,6 +11,7 @@ void set_lift_position(int target, int speed);
 bool timeout(int target, int vel, int current);
 void lift_down(bool hold = false);
 void lift_lil_down(bool hold = false);
+void lift_down_big(bool hold = false);
 void lift_mid(bool hold = false);
 void lift_up(bool hold = false);
 
