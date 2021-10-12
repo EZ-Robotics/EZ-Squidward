@@ -7,8 +7,15 @@ pros::ADIDigitalOut claw(1);
 
 void set_claw(bool in) { claw.set_value(in); }
 
-void claw_up()   { set_claw(true); }
-void claw_down() { set_claw(false);  }
+void claw_up()   {
+  set_claw(true);
+  claw_toggle = true;
+}
+
+void claw_down() {
+  set_claw(false);
+  claw_toggle = false;
+}
 
 void
 claw_control() {

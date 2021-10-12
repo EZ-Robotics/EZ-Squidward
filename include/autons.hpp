@@ -3,6 +3,7 @@
 void reset_constants();
 
 void double_steal();
+void test_double_steal();
 void steal_one();
 
 void auto_1();

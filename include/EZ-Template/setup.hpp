@@ -77,9 +77,9 @@ const bool  DISABLE_CONTROLLER = false; // If false, allows controller to modify
 #define DECREASE_R_CURVE pros::E_CONTROLLER_DIGITAL_Y     // decrease right joystick curve (disabled when TANK_CONTROL = false)
 #define INCREASE_R_CURVE pros::E_CONTROLLER_DIGITAL_A     // increase right joystick curve (disabled when TANK_CONTROL = false)
 
-const double STARTING_LEFT_CURVE_SCALE  = 0;     // Starting value for curve (if 0, linear graph)
-const double STARTING_RIGHT_CURVE_SCALE = 0;     // Starting value for curve (if 0, linear graph) (disabled when TANK_CONTROL = false)
-const double CURVE_MODIFY_INTERVAL      = 0.1;   // When you modify the scaler with the controller, it will increase/decrease by this interval
+const double STARTING_LEFT_CURVE_SCALE  = 0;    // Starting value for curve (if 0, linear graph)
+const double STARTING_RIGHT_CURVE_SCALE = 0;    // Starting value for curve (if 0, linear graph) (disabled when TANK_CONTROL = false)
+const double CURVE_MODIFY_INTERVAL      = 0.1;  // When you modify the scaler with the controller, it will increase/decrease by this interval
 
 
 

@@ -36,15 +36,15 @@ auto_select(bool is_auton) {
       if (is_auton) double_steal();
       break;
     case 1: // Auto 2
-      pros::lcd::set_text(1, "Steal One");
-      if (is_auton) steal_one();
+      pros::lcd::set_text(1, "Test Double Steal");
+      if (is_auton) test_double_steal();
       break;
     case 2: // Auto 3
-      pros::lcd::set_text(1, "Auton 2");
-      if (is_auton) auto_2();
+      pros::lcd::set_text(1, "Steal One2");
+      if (is_auton) steal_one();
       break;
     case 3: // Auto 4
-      pros::lcd::set_text(1, "Auton 3");
+      pros::lcd::set_text(1, "Far Double");
       if (is_auton) auto_3();
       break;
     case 4: // Auto 5

@@ -51,6 +51,7 @@ two_mogo_constants() {
 */
 
 
+
 void double_steal() {
 
   // Drive towards center goal
@@ -132,7 +133,124 @@ void double_steal() {
   set_drive_pid(drive, -5, DRIVE_SPEED);
   wait_drive();
 
+  // Turn to face opponents side
+  set_drive_pid(turn, 0, TURN_SPEED);
+  wait_drive();
+
 }
+
+
+
+void test_double_steal() {
+
+  // Drive towards center goal
+  claw_up();
+  set_drive_pid(drive, 45, 127);
+  lift_down(true);
+  // Slow down when close to center
+  wait_until(35);
+  set_max_speed(40);
+  wait_drive();
+
+  // Grab goal
+  claw_down();
+
+  // Drive back with goal
+  set_drive_pid(drive, -36, 127, true);
+  // Release goal during drive back
+  wait_until(-14);
+  set_max_speed(DRIVE_SPEED);
+  claw_up();
+  wait_drive();
+
+  // Turn to face center goal
+  set_drive_pid(turn, -35, TURN_SPEED);
+  wait_drive();
+
+  // Drive towards center goal
+  set_drive_pid(drive, 49, 127);
+  lift_down(true);
+  wait_until(42);
+  set_max_speed(40);
+  wait_drive();
+
+  // Grab goal
+  claw_down();
+
+  // Drive back with goal
+  set_drive_pid(drive, -36, 70, true);
+  // Release goal during drive back
+  wait_until(-27);
+  set_max_speed(DRIVE_SPEED);
+  // claw_up();
+  wait_drive();
+
+  // Turn to face alliance goal
+  set_drive_pid(turn, -90, TURN_SPEED);
+  mogo_mid(true);
+  wait_drive();
+
+  // Drive into goal
+  set_drive_pid(drive, -19, 80, true);
+  wait_drive();
+
+  /////
+
+  // Drive forward a little
+  mogo_down(true);
+  set_drive_pid(drive, 10, DRIVE_SPEED);
+  wait_drive();
+
+  // Turn to corner
+  set_drive_pid(turn, -210, TURN_SPEED);
+  lift_lil_down(true);
+  wait_drive();
+
+  // Drive into corner
+  set_drive_pid(drive, 10, DRIVE_SPEED);
+  wait_drive();
+
+  // Release goal
+  claw_up();
+
+  // Drive away
+  set_drive_pid(drive, -5, DRIVE_SPEED);
+  wait_drive();
+
+  /////
+
+  /*
+  // Drive goal lift
+  mogo_down(true);
+  set_drive_pid(turn, -35, TURN_SPEED);
+  wait_drive();
+
+  // Drive into first neutral
+  set_drive_pid(drive, 10, 80);
+  wait_drive();
+
+  // Grab goal
+  claw_down();
+
+  // Turn to corner
+  set_drive_pid(turn, -210, TURN_SPEED);
+  lift_lil_down(true);
+  wait_drive();
+
+  // Drive into corner
+  set_drive_pid(drive, 10, DRIVE_SPEED);
+  wait_drive();
+
+  // Release goal
+  claw_up();
+
+  // Drive away
+  set_drive_pid(drive, -5, DRIVE_SPEED);
+  wait_drive();
+  */
+
+}
+
 
 
 void steal_one() {
