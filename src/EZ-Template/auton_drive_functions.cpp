@@ -385,7 +385,7 @@ set_drive_pid(int type, float target, int speed, bool slew_on, bool toggle_headi
 }
 
 bool
-drive_exit_condition(float l_target, float r_target, int small_timeout, int start_small_counter_within, int big_timeout, int start_big_counter_within, int velocity_timeout) {
+drive_exit_condition(float l_target, float r_target, int small_timeout, int start_small_counter_within, int big_timeout, int start_big_counter_within, int velocity_timeout, bool wait_until = false) {
   static int i = 0, j = 0, k = 0, g = 0;
 
   // If the robot gets within the target, make sure it's there for small_timeout amount of time
@@ -394,7 +394,9 @@ drive_exit_condition(float l_target, float r_target, int small_timeout, int star
     //printf("\nJ: %i", j/10);
 
     if (j>small_timeout) {
-      printf("Drive Timed Out - Small Thresh\n");
+      if (!wait_until) printf("Drive Timed Out");
+      else             printf("Drive Wait Until Timed Out");
+      printf(" - Small Thresh\n");
       return false;
     }
   }
@@ -409,7 +411,9 @@ drive_exit_condition(float l_target, float r_target, int small_timeout, int star
     //printf("\nI: %i", i/10);
 
     if (i>big_timeout) {
-      printf("Drive Timed Out - Big Thresh\n");
+      if (!wait_until) printf("Drive Timed Out");
+      else             printf("Drive Wait Until Timed Out");
+      printf(" - Big Thresh\n");
       return false;
     }
   }
@@ -422,7 +426,9 @@ drive_exit_condition(float l_target, float r_target, int small_timeout, int star
     //printf("\nI: %i", i/10);
 
     if (k>velocity_timeout) {
-      printf("Drive Timed Out - Velocity 0\n");
+      if (!wait_until) printf("Drive Timed Out");
+      else             printf("Drive Wait Until Timed Out");
+      printf(" - Velocity 0\n");
       return false;
     }
   }
@@ -434,7 +440,7 @@ drive_exit_condition(float l_target, float r_target, int small_timeout, int star
 }
 
 bool
-turn_exit_condition(float target, int small_timeout, int start_small_counter_within, int big_timeout, int start_big_counter_within, int velocity_timeout) {
+turn_exit_condition(float target, int small_timeout, int start_small_counter_within, int big_timeout, int start_big_counter_within, int velocity_timeout, bool wait_until = false) {
   static int i, j, k;
 
   // If the robot gets within the target, make sure it's there for small_timeout amount of time
@@ -443,7 +449,9 @@ turn_exit_condition(float target, int small_timeout, int start_small_counter_wit
     //printf("\nJ: %i", j/10);
 
     if (j>small_timeout) {
-      printf("Turn Timed Out - Small Thresh\n");
+      if (!wait_until) printf("Turn Timed Out");
+      else             printf("Turn Wait Until Timed Out");
+      printf(" - Small Thresh\n");
       return false;
     }
   }
@@ -457,7 +465,9 @@ turn_exit_condition(float target, int small_timeout, int start_small_counter_wit
     //printf("\nI: %i", i/10);
 
     if (i>big_timeout) {
-      printf("Turn Timed Out - Big Thresh\n");
+      if (!wait_until) printf("Turn Timed Out");
+      else             printf("Turn Wait Until Timed Out");
+      printf(" - Big Thresh\n");
       return false;
     }
   }
@@ -470,7 +480,9 @@ turn_exit_condition(float target, int small_timeout, int start_small_counter_wit
     //printf("\nI: %i", i/10);
 
     if (k>velocity_timeout) {
-      printf("Turn Timed Out - Velocity 0\n");
+      if (!wait_until) printf("Turn Timed Out");
+      else             printf("Turn Wait Until Timed Out");
+      printf(" - Velocity 0\n");
       return false;
     }
   }
@@ -531,12 +543,16 @@ wait_until(int input) {
       r_error = r_tar - right_sensor();
 
       // Break the loop once target is passed
-      if (sgn(l_error)==l_sgn && sgn(r_error)==r_sgn)
+      if (sgn(l_error)==l_sgn && sgn(r_error)==r_sgn) {
+        run = false; // this makes sure that the following else if is rnu after the sgn is flipped
+      }
+      else if (sgn(l_error)!=l_sgn && sgn(r_error)!=r_sgn) {
+        printf("Drive Wait Until Completed- Error Sgn Flipped\n");
         run = false;
-      else if (sgn(l_error)!=l_sgn && sgn(r_error)!=r_sgn)
+      }
+      else if (!drive_exit_condition(l_tar, r_tar, 80, 50, 300, 150, 500, true)) {
         run = false;
-      else if (!drive_exit_condition(l_tar, r_tar, 80, 50, 300, 150, 500))
-        run = false;
+      }
 
       pros::delay(DELAY_TIME);
     }
@@ -553,12 +569,15 @@ wait_until(int input) {
       g_error = input - get_gyro();
 
       // Break the loop once target is passed
-      if (sgn(g_error)==g_sgn)
-        run = true;
-      else if (sgn(g_error)!=g_sgn)
+      if (sgn(g_error)==g_sgn) {
+        run = true; // this makes sure that the following else if is rnu after the sgn is flipped
+      }
+      else if (sgn(g_error)!=g_sgn) {
         run = false;
-      else if (!turn_exit_condition(input, 100, 3, 500, 7, 500))
+      }
+      else if (!turn_exit_condition(input, 100, 3, 500, 7, 500, true)) {
         run = false;
+      }
 
       pros::delay(DELAY_TIME);
     }
