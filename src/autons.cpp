@@ -79,95 +79,6 @@ void double_steal() {
   wait_drive();
 
   // Drive towards center goal
-  set_drive_pid(drive, 49, 127);
-  lift_down(true);
-  wait_until(44);
-  set_max_speed(40);
-  wait_drive();
-
-  // Grab goal
-  claw_down();
-
-  // Drive back with goal
-  set_drive_pid(drive, -36, 70, true);
-  // Release goal during drive back
-  wait_until(-27);
-  set_max_speed(DRIVE_SPEED);
-  claw_up();
-  wait_drive();
-
-  // Turn to face alliance goal
-  set_drive_pid(turn, -90, TURN_SPEED);
-  mogo_mid(true);
-  wait_drive();
-
-  // Drive into goal
-  set_drive_pid(drive, -19, 80, true);
-  wait_drive();
-
-  // Drive goal lift
-  mogo_down(true);
-  set_drive_pid(turn, -35, TURN_SPEED);
-  wait_drive();
-
-  // Drive into first neutral
-  set_drive_pid(drive, 10, 80);
-  wait_drive();
-
-  // Grab goal
-  claw_down();
-
-  // Turn to corner
-  set_drive_pid(turn, -210, TURN_SPEED);
-  lift_lil_down(true);
-  wait_drive();
-
-  // Drive into corner
-  set_drive_pid(drive, 10, DRIVE_SPEED);
-  wait_drive();
-
-  // Release goal
-  claw_up();
-
-  // Drive away
-  set_drive_pid(drive, -5, DRIVE_SPEED);
-  wait_drive();
-
-  // Turn to face opponents side
-  set_drive_pid(turn, 0, TURN_SPEED);
-  wait_drive();
-
-}
-
-
-
-void test_double_steal() {
-
-  // Drive towards center goal
-  claw_up();
-  set_drive_pid(drive, 45, 127);
-  lift_down(true);
-  // Slow down when close to center
-  wait_until(35);
-  set_max_speed(40);
-  wait_drive();
-
-  // Grab goal
-  claw_down();
-
-  // Drive back with goal
-  set_drive_pid(drive, -36, 127, true);
-  // Release goal during drive back
-  wait_until(-14);
-  set_max_speed(DRIVE_SPEED);
-  claw_up();
-  wait_drive();
-
-  // Turn to face center goal
-  set_drive_pid(turn, -35, TURN_SPEED);
-  wait_drive();
-
-  // Drive towards center goal
   set_drive_pid(drive, 51, 127);
   lift_down(true);
   wait_until(40);
@@ -197,14 +108,6 @@ void test_double_steal() {
   wait_drive();
   mogo_down(true);
 
-  /////
-
-  /*
-  // Drive forward a little
-  set_drive_pid(drive, 5, DRIVE_SPEED);
-  wait_drive();
-  */
-
   // Turn to corner
   set_drive_pid(l_swing, -180, TURN_SPEED);
   wait_drive();
@@ -225,38 +128,6 @@ void test_double_steal() {
 
   set_drive_pid(turn, -360, TURN_SPEED);
   wait_drive();
-
-  /////
-
-  /*
-  // Drive goal lift
-  mogo_down(true);
-  set_drive_pid(turn, -35, TURN_SPEED);
-  wait_drive();
-
-  // Drive into first neutral
-  set_drive_pid(drive, 10, 80);
-  wait_drive();
-
-  // Grab goal
-  claw_down();
-
-  // Turn to corner
-  set_drive_pid(turn, -210, TURN_SPEED);
-  lift_lil_down(true);
-  wait_drive();
-
-  // Drive into corner
-  set_drive_pid(drive, 10, DRIVE_SPEED);
-  wait_drive();
-
-  // Release goal
-  claw_up();
-
-  // Drive away
-  set_drive_pid(drive, -5, DRIVE_SPEED);
-  wait_drive();
-  */
 
 }
 
@@ -288,13 +159,16 @@ void steal_one() {
   mogo_mid(true);
   wait_drive();
 
+  // Turn to face alliance goal
   set_drive_pid(turn, -90, TURN_SPEED, true);
   wait_drive();
 
+  // Drive into alliance goal
   set_drive_pid(drive, -14, DRIVE_SPEED, true);
   wait_drive();
   mogo_down(true);
 
+  // Swing to corner
   set_drive_pid(l_swing, -180, TURN_SPEED, true);
   wait_drive();
 
@@ -312,6 +186,7 @@ void steal_one() {
   set_drive_pid(drive, -27, DRIVE_SPEED, true);
   wait_drive();
 
+  // Turn to face opponents
   set_drive_pid(turn, -360, TURN_SPEED);
   wait_drive();
 
@@ -322,30 +197,33 @@ void steal_one() {
 
 void plat_down_center_hit() {
 
+  // Tunr to face center
   set_drive_pid(turn, 12, TURN_SPEED);
   lift_down(true);
   wait_drive();
 
+  // Drive into goal
   set_drive_pid(drive, 56, 127);
   wait_until(42);
   claw_down();
   set_max_speed(DRIVE_SPEED);
   wait_drive();
 
+  // Swing to face centerline
   set_drive_pid(l_swing, 90, TURN_SPEED);
   wait_until(45);
   lift_lil_down(true);
   wait_drive();
 
+
+  // FULL SEND
   set_drive_pid(drive, 62, DRIVE_SPEED, true);
   wait_drive();
 
+  // back up a little to block :)
   set_drive_pid(drive, -12, DRIVE_SPEED);
   lift_down(true);
   wait_drive();
-
-  //set_drive_pid(l_swing, 45, TURN_SPEED);
-  //wait_drive();
 
 }
 
@@ -355,38 +233,46 @@ void plat_down_center_hit() {
 
 void plat_down_center() {
 
+  // Turn to face goal
   set_drive_pid(turn, 12, TURN_SPEED);
   lift_down(true);
   wait_drive();
 
+  // Send it
   set_drive_pid(drive, 58, 127);
   wait_until(42);
   claw_down();
   set_max_speed(DRIVE_SPEED);
   wait_drive();
 
+  // Come bcak with goal
   set_drive_pid(drive, -46, 127);
   wait_until(-24);
   set_max_speed(DRIVE_SPEED);
   claw_up();
   wait_drive();
 
+  // Turn to face alliance oal
   set_drive_pid(turn, -48, TURN_SPEED);
   wait_drive();
 
   mogo_mid(true);
 
+  // Drive into alliance goal
   set_drive_pid(drive, -11, 80);
   wait_drive();
 
   mogo_down(true);
 
+  // Drive forward
   set_drive_pid(drive, 28, DRIVE_SPEED, true);
   wait_drive();
 
+  // Turn to face opponents home zone
   set_drive_pid(turn, 0, TURN_SPEED);
   wait_drive();
 
+  // Drive as far as possible with alliance goal still scored
   set_drive_pid(drive, 14, DRIVE_SPEED, true);
   wait_drive();
 

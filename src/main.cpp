@@ -34,7 +34,7 @@ auto_select(bool is_auton) {
     case 0: // Auto 1
       pros::lcd::set_text(0, "Double Center Steal");
       pros::lcd::set_text(5, "Starting: Plat Up");
-      if (is_auton) test_double_steal();
+      if (is_auton) double_steal();
       break;
     case 1: // Auto 3
       pros::lcd::set_text(0, "Center Rush");
