@@ -20,7 +20,7 @@ disable_all_tasks() {
  * When is_auton is true, the autonomous mode will run.  Otherwise, it will only
  * print to brain.
  */
-const int num_of_pages = 4; // Number of pages
+const int num_of_pages = 5; // Number of pages
 int current_page = 0;
 
 void
@@ -50,6 +50,15 @@ auto_select(bool is_auton) {
       pros::lcd::set_text(0, "Center Rush");
       pros::lcd::set_text(5, "Starting: Plat Down");
       if (is_auton) plat_down_center();
+      break;
+    case 4: // Auto 5
+      pros::lcd::set_text(0, "FUCK YOU LUCAS");
+      pros::lcd::set_text(1, "FUCK YOU LUCAS");
+      pros::lcd::set_text(2, "FUCK YOU LUCAS");
+      pros::lcd::set_text(3, "FUCK YOU LUCAS");
+      pros::lcd::set_text(4, "FUCK YOU LUCAS");
+      pros::lcd::set_text(5, "FUCK YOU LUCAS");
+      if (is_auton) fuck_you_lucas();
       break;
 
     default:
@@ -134,8 +143,6 @@ initialize() {
 
   disable_all_tasks();
 
-  claw_up();
-
   init_auto_sd();
   init_curve_sd();
 
@@ -149,6 +156,8 @@ initialize() {
 
   zero_lift();
   zero_mogo();
+
+  claw_up();
 
   chassis_motor_init();
 }
@@ -195,8 +204,8 @@ void
 autonomous() {
   tare_gyro();
   reset_drive_sensor();
-  zero_lift();
-  zero_mogo();
+  //zero_lift();
+  //zero_mogo();
   set_drive_brake(MOTOR_BRAKE_HOLD);
   drive_pid.resume();
 

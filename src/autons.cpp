@@ -59,12 +59,13 @@ void double_steal() {
   set_drive_pid(drive, 45, 127);
   lift_down(true);
   // Slow down when close to center
-  wait_until(35);
+  wait_until(40);
   set_max_speed(40);
+  claw_down();
   wait_drive();
 
   // Grab goal
-  claw_down();
+  //claw_down();
 
   // Drive back with goal
   set_drive_pid(drive, -36, 127, true);
@@ -79,17 +80,18 @@ void double_steal() {
   wait_drive();
 
   // Drive towards center goal
-  set_drive_pid(drive, 51, 127);
+  set_drive_pid(drive, 53, 127);
   lift_down(true);
-  wait_until(40);
+  wait_until(48);
   set_max_speed(40);
+  claw_down();
   wait_drive();
 
   // Grab goal
-  claw_down();
+  //claw_down();
 
   // Drive back with goal
-  set_drive_pid(drive, -38, 127, true);
+  set_drive_pid(drive, -40, 127, true);
   // Release goal during drive back
   wait_until(-27);
   set_max_speed(60);
@@ -274,6 +276,73 @@ void plat_down_center() {
 
   // Drive as far as possible with alliance goal still scored
   set_drive_pid(drive, 14, DRIVE_SPEED, true);
+  wait_drive();
+
+}
+
+
+
+
+void fuck_you_lucas() {
+
+  set_drive_pid(drive, 58, 127);
+  lift_down(true);
+  wait_until(40);
+  set_max_speed(40);
+  wait_until(56);
+  claw_down();
+  wait_drive();
+
+  //set_drive_pid(drive, -24, 127);
+  set_drive_pid(r_swing, 152.5, 127);
+  wait_until(45);
+  set_max_speed(TURN_SPEED);
+  mogo_mid(true);
+  wait_drive();
+
+  set_drive_pid(drive, -26, 80);
+  wait_drive();
+
+  mogo_up(true);
+
+  set_drive_pid(drive, 30, DRIVE_SPEED, true);
+  wait_drive();
+
+  set_drive_pid(turn, 147, TURN_SPEED);
+  wait_drive();
+
+  set_drive_pid(drive, 55, DRIVE_SPEED, true);
+  wait_drive();
+
+  pros::delay(250);
+  claw_up();
+  pros::delay(250);
+
+  set_drive_pid(drive, -10, DRIVE_SPEED, true);
+  wait_drive();
+
+  set_drive_pid(turn, 22.5 + 7, 60);
+  wait_drive();
+
+  set_drive_pid(drive, 33, DRIVE_SPEED, true);
+  mogo_mid(true);
+  wait_until(28);
+  set_max_speed(40);
+  claw_down();
+  wait_drive();
+
+  set_drive_pid(l_swing, 22.5 + 7 - 45, TURN_SPEED);
+  wait_drive();
+
+  set_drive_pid(drive, -18, DRIVE_SPEED, true);
+  wait_drive();
+
+  mogo_down(true);
+
+  set_drive_pid(r_swing, 22.5 + 7, TURN_SPEED);
+  wait_drive();
+
+  set_drive_pid(drive, -3, DRIVE_SPEED);
   wait_drive();
 
 

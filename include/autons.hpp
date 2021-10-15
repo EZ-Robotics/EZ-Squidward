@@ -6,6 +6,7 @@ void double_steal();
 void steal_one();
 void plat_down_center_hit();
 void plat_down_center();
+void fuck_you_lucas();
 
 void auto_1();
 void auto_2();
