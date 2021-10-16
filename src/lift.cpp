@@ -193,14 +193,38 @@ lift_control() {
 
   //if (!claw_toggle) done_delaying = false;
 
+  // Lift all the way up
   if (is_at_down)
     lift_up(false);
+
+  // Lift down
   else if (b_lift_up) {
-    if (done_delaying)
+    // When the claw is closed,
+    if (done_delaying) {
       lift_lil_down(false);
-    else
-      lift_down(false);
+    }
+    // When the claw is open,
+    else {
+      // If the current position is greater then 50, run the built in PID
+      if (get_lift() > 50) {
+        lift_down(false);
+      }
+      // When the robot is within 50,
+      else {
+        // When the velocity is 0, reset the sensor and set the lift a little down
+        if (get_lift_vel() == 0) {
+          zero_lift();
+          set_lift(-2);
+
+        }
+        // When the velocity isn't 0, bring the lift down at -40
+        else {
+          set_lift(-40);
+        }
+      }
+    }
   }
+  // Lift almost all the way up
   else if (!b_lift_up)
     lift_mid(false);
 }

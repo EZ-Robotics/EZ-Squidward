@@ -345,6 +345,8 @@ void fuck_you_lucas() {
   set_drive_pid(drive, -3, DRIVE_SPEED);
   wait_drive();
 
+  claw_up();
+
 
 }
 
