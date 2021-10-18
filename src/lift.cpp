@@ -6,7 +6,14 @@ const int LIFT_DOWN_BIG = 200;
 const int LIFT_UP   = 850;
 const int LIFT_MID  = 700;
 
-const int MAX_SPEED = 200;
+const int MAX_SPEED = 200; //rpm
+
+// Lift Down Constants
+const int DOWN_HARD     = -50; // Power to bring the lift down fast
+const int DOWN_SMALL    = -2;  // Power to hold the lift down
+const int STOP_PID      = 20;  // When lift is below this, it will turn off PID and move to velocity logic
+const int VEL_TIMEOUT   = 100; // When velocity is 0 for this long, the lift is down
+const int FIRST_TIMEOUT = 100; // Set the lift to a little bit of power at the start of autonomous
 
 // Driver Control Parameters
 bool b_lift_up = true;
@@ -73,13 +80,57 @@ bool timeout(int target, int vel, int current) {
 void
 lift_down (bool hold) {
   //printf("lift down\n");
-  set_lift_position(LIFT_DOWN, MAX_SPEED);
-  is_in = timeout(LIFT_DOWN, get_lift_vel(), get_lift());
 
+  static int t, x;
+  static bool stop, first_run = true;
+
+  // When run during autonomous, bring the lift down at power to make sure it's all the way down
+  if (hold && first_run) {
+    set_lift(DOWN_HARD);
+    x+=DELAY_TIME;
+    if (x>=FIRST_TIMEOUT) {
+      first_run = false;
+      x = 0;
+    }
+  }
+
+
+  // If the current position is greater then some number, run the built in PID
+  if (get_lift() > STOP_PID) {
+    set_lift_position(LIFT_DOWN, MAX_SPEED);
+    //is_in = timeout(LIFT_DOWN, get_lift_vel(), get_lift());
+    is_in = false;
+    stop = false;
+  }
+  // When the robot is within 50,
+  else {
+    // When the velocity is 0, reset the sensor and set the lift a little down
+    if (get_lift_vel() == 0) {
+      t+=DELAY_TIME;
+      if (t >= VEL_TIMEOUT) {
+        zero_lift();
+        set_lift(DOWN_SMALL);
+        is_in = true;
+        stop = true;
+        t = 0;
+      }
+    }
+    // When the velocity isn't 0, bring the lift down at some power
+    else {
+      is_in = stop?true:false;
+      t = 0;
+      set_lift(stop?DOWN_SMALL:DOWN_HARD);
+    }
+  }
+
+
+  // Recursive for autonomous
   if (hold) {
+    // Variables for driver control
     b_lift_up = true;
     is_at_down = false;
     pros::delay(DELAY_TIME);
+    first_run = x>=FIRST_TIMEOUT?is_in:first_run;
     lift_down(!is_in);
   }
 }
@@ -205,23 +256,7 @@ lift_control() {
     }
     // When the claw is open,
     else {
-      // If the current position is greater then 50, run the built in PID
-      if (get_lift() > 50) {
-        lift_down(false);
-      }
-      // When the robot is within 50,
-      else {
-        // When the velocity is 0, reset the sensor and set the lift a little down
-        if (get_lift_vel() == 0) {
-          zero_lift();
-          set_lift(-2);
-
-        }
-        // When the velocity isn't 0, bring the lift down at -40
-        else {
-          set_lift(-40);
-        }
-      }
+      lift_down(false);
     }
   }
   // Lift almost all the way up

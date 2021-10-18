@@ -204,12 +204,14 @@ void
 autonomous() {
   tare_gyro();
   reset_drive_sensor();
-  //zero_lift();
-  //zero_mogo();
+  zero_lift();
+  zero_mogo();
   set_drive_brake(MOTOR_BRAKE_HOLD);
   drive_pid.resume();
 
-  auto_select(true);
+  //auto_select(true);
+
+  lift_down(true);
 }
 
 
