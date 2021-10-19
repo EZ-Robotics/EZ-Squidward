@@ -102,13 +102,13 @@ void double_steal() {
 
   // Turn to face alliance goal
   set_drive_pid(turn, -90, TURN_SPEED);
-  mogo_mid(true);
+  mogo_down(true);
   wait_drive();
 
   // Drive into goal
   set_drive_pid(drive, -19, 80, true);
   wait_drive();
-  mogo_down(true);
+  mogo_up(true);
 
   // Turn to corner
   set_drive_pid(l_swing, -180, TURN_SPEED);
@@ -158,7 +158,7 @@ void steal_one() {
   lift_lil_down(true);
   wait_until(20);
   set_max_speed(DRIVE_SPEED);
-  mogo_mid(true);
+  mogo_down(true);
   wait_drive();
 
   // Turn to face alliance goal
@@ -168,7 +168,7 @@ void steal_one() {
   // Drive into alliance goal
   set_drive_pid(drive, -14, DRIVE_SPEED, true);
   wait_drive();
-  mogo_down(true);
+  mogo_up(true);
 
   // Swing to corner
   set_drive_pid(l_swing, -180, TURN_SPEED, true);
@@ -258,13 +258,13 @@ void plat_down_center() {
   set_drive_pid(turn, -48, TURN_SPEED);
   wait_drive();
 
-  mogo_mid(true);
+  mogo_down(true);
 
   // Drive into alliance goal
   set_drive_pid(drive, -11, 80);
   wait_drive();
 
-  mogo_down(true);
+  mogo_up(true);
 
   // Drive forward
   set_drive_pid(drive, 28, DRIVE_SPEED, true);
@@ -297,13 +297,13 @@ void fuck_you_lucas() {
   set_drive_pid(r_swing, 152.5, 127);
   wait_until(45);
   set_max_speed(TURN_SPEED);
-  mogo_mid(true);
+  mogo_down(true);
   wait_drive();
 
   set_drive_pid(drive, -26, 80);
   wait_drive();
 
-  mogo_up(true);
+  mogo_mid(true);
 
   set_drive_pid(drive, 30, DRIVE_SPEED, true);
   wait_drive();
@@ -325,7 +325,7 @@ void fuck_you_lucas() {
   wait_drive();
 
   set_drive_pid(drive, 33, DRIVE_SPEED, true);
-  mogo_mid(true);
+  mogo_down(true);
   wait_until(28);
   set_max_speed(40);
   claw_down();
@@ -337,7 +337,7 @@ void fuck_you_lucas() {
   set_drive_pid(drive, -18, DRIVE_SPEED, true);
   wait_drive();
 
-  mogo_down(true);
+  mogo_up(true);
 
   set_drive_pid(r_swing, 22.5 + 7, TURN_SPEED);
   wait_drive();

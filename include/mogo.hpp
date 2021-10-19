@@ -3,7 +3,7 @@
 extern bool b_mogo_up;
 
 void set_mogo(int input);
-void zero_mogo();
+void zero_mogo(int input = 0);
 int get_mogo();
 int get_mogo_vel();
 void set_mogo_position(int target, int speed);

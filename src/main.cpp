@@ -209,9 +209,7 @@ autonomous() {
   set_drive_brake(MOTOR_BRAKE_HOLD);
   drive_pid.resume();
 
-  //auto_select(true);
-
-  lift_down(true);
+  auto_select(true);
 }
 
 
