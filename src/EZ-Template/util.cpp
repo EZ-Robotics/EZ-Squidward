@@ -5,6 +5,7 @@ file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
 #include "main.h"
+#include <list>
 
 
 void
@@ -37,6 +38,7 @@ pros::Motor r_motor(abs(R_CHASSIS_PORTS[0]), MOTOR_GEARSET_6, is_reversed(R_CHAS
 
 pros::Imu gyro(IMU_PORT);
 
+
 // Initializes pros reversing
 void
 chassis_motor_init() {
@@ -45,17 +47,27 @@ chassis_motor_init() {
     pros::Motor b(abs(R_CHASSIS_PORTS[i]), MOTOR_GEARSET_6, is_reversed(R_CHASSIS_PORTS[i]), MOTOR_ENCODER_COUNTS);
   }
 }
+/*
+void chassis_ports_init(std::list<int> l_input, std::list<int> r_input) {
+  for (int i : l_input) {
+    pros::Motor a(abs(i), MOTOR_GEARSET_6, is_reversed(i), MOTOR_ENCODER_COUNTS);
+  }
+  for (int i : r_input) {
+    pros::Motor b(abs(i), MOTOR_GEARSET_6, is_reversed(i), MOTOR_ENCODER_COUNTS);
+  }
+}
+*/
 
 // Set drive
 void
-set_left_chassis(int l) {
+set_l_chassis(int l) {
   for(int i=0; i<MOTORS_PER_SIDE; i++) {
     pros::c::motor_move_voltage(abs(L_CHASSIS_PORTS[i]), l*(12000.0/127.0));
   }
 }
 
 void
-set_right_chassis(int r) {
+set_r_chassis(int r) {
   for(int i=0; i<MOTORS_PER_SIDE; i++) {
     pros::c::motor_move_voltage(abs(R_CHASSIS_PORTS[i]), r*(12000.0/127.0));
   }
@@ -63,8 +75,8 @@ set_right_chassis(int r) {
 
 void
 set_tank(int l, int r) {
-  set_left_chassis(l);
-  set_right_chassis(r);
+  set_l_chassis(l);
+  set_r_chassis(r);
 }
 
 

@@ -14,9 +14,9 @@ extern pros::Motor r_motor;
 
 void chassis_motor_init();
 
-void set_left_chassis(int left);
-void set_right_chassis(int right);
-void set_tank(int input_l, int input_r);
+void set_l_chassis(int l);
+void set_r_chassis(int r);
+void set_tank(int l, int r);
 void set_drive_brake(pros::motor_brake_mode_e_t input);
 
 int right_sensor();
