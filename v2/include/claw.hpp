@@ -1,6 +1,6 @@
 #pragma once
 
-extern bool claw_toggle;
+inline bool claw_state = true;
 
 void claw_up();
 void claw_down();

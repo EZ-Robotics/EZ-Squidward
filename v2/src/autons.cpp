@@ -65,6 +65,30 @@ void modified_exit_condition() {
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
 }
 
+void tug (int attempts) {
+  for (int i=0; i<attempts-1; i++) {
+    // Attempt to drive backwards
+    printf("i - %i", i);
+    chassis.set_drive_pid(-12, 127);
+    chassis.wait_drive();
+
+    // If failsafed...
+    if (chassis.interfered) {
+      chassis.reset_drive_sensor();
+      chassis.set_drive_pid(-2, 20);
+      pros::delay(1000);
+    }
+    // If robot successfully drove back, return
+    else {
+      return;
+    }
+  }
+}
+
+
+
+
+
 
 
 
@@ -84,6 +108,13 @@ void double_steal() {
   chassis.set_drive_pid(-38, 127, true);
   // Release goal during drive back
   chassis.wait_until(-14);
+
+  // Check if interfered while driving back
+  if (chassis.interfered) {
+   tug(5);
+   return;
+ }
+
   chassis.set_max_speed(DRIVE_SPEED);
   claw_up();
   chassis.wait_drive();
@@ -105,6 +136,13 @@ void double_steal() {
   chassis.set_drive_pid(-38, 127, true);
   // Release goal during drive back
   chassis.wait_until(-27);
+
+  // Check if interfered while driving back
+  if (chassis.interfered) {
+   tug(5);
+   return;
+ }
+
   chassis.set_max_speed(60);
   //lift_lil_down(true);       ////////////////////
   // claw_up();
@@ -146,187 +184,209 @@ void double_steal() {
 
 
 
+void steal_one() {
 
-
-
-///
-// Drive Example
-///
-void drive_example() {
-  // The first parameter is target inches
-  // The second parameter is max speed the robot will drive at
-  // The third parameter is a boolean (true or false) for enabling/disabling a slew at the start of drive motions
-  // for slew, only enable it when the drive distance is greater then the slew distance + a few inches
-
-
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
+  // Drive towards center goal
+  claw_up();
+  chassis.set_drive_pid(45, 127);
+  set_lift_state(DOWN);
+  // Slow down when close to center
+  chassis.wait_until(35);
+  chassis.set_max_speed(40);
   chassis.wait_drive();
 
+  // Grab goal
+  claw_down();
+
+  // Turn 180
+  chassis.set_turn_pid(-180, TURN_SPEED);
+  chassis.wait_drive();
+
+  // Drive back with goal
+  chassis.set_drive_pid(27, 127, true);
+  chassis.wait_until(20);
+  chassis.set_max_speed(DRIVE_SPEED);
+  set_mogo_state(m::DOWN);
+  chassis.wait_drive();
+
+  // Turn to face alliance goal
+  chassis.set_turn_pid(-90, TURN_SPEED);
+  chassis.wait_drive();
+
+  // Drive into alliance goal
+  chassis.set_drive_pid(-14, 50, true);
+  chassis.wait_drive();
+  set_mogo_state(m::UP);
+  wait_mogo();
+
+  // Swing to corner
+  chassis.set_swing_pid(ez::LEFT_SWING, -180, TURN_SPEED);
+  chassis.wait_drive();
+
+  // Drive into corner
+  chassis.set_drive_pid(17, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  // Release goal
+  pros::delay(100);
+  claw_up();
+  pros::delay(500);
+
+  // Drive away
+  chassis.set_drive_pid(-27, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  // Turn to face opponents
+  chassis.set_turn_pid(-360, TURN_SPEED);
+  chassis.wait_drive();
+
+}
+
+
+
+void plat_down_center_hit() {
+
+  // Tunr to face center
+  chassis.set_drive_pid(12, TURN_SPEED);
+  chassis.wait_drive();
+
+  // Drive into goal
+  chassis.set_drive_pid(56, 127);
+  chassis.wait_until(42);
+  claw_down();
+  chassis.set_max_speed(DRIVE_SPEED);
+  chassis.wait_drive();
+
+  // Swing to face centerline
+  chassis.set_swing_pid(ez::LEFT_SWING, 90, TURN_SPEED);
+  chassis.wait_drive();
+
+
+  // FULL SEND
+  chassis.set_drive_pid(62, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  // back up a little to block :)
   chassis.set_drive_pid(-12, DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-12, DRIVE_SPEED);
-  chassis.wait_drive();
 }
 
 
 
-///
-// Turn Example
-///
-void turn_example() {
-  // The first parameter is target degrees
-  // The second parameter is max speed the robot will drive at
+void plat_down_center() {
 
-
-  chassis.set_turn_pid(90, TURN_SPEED);
+  // Turn to face goal
+  chassis.set_turn_pid(12, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(45, TURN_SPEED);
+  // Send it
+  chassis.set_drive_pid(58, 127);
+  chassis.wait_until(42);
+  claw_down();
+  chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-}
-
-
-
-///
-// Combining Turn + Drive
-///
-void drive_and_turn() {
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
+  // Come bcak with goal
+  chassis.set_drive_pid(-46, 127);
+  chassis.wait_until(-24);
+  chassis.set_max_speed(DRIVE_SPEED);
+  claw_up();
   chassis.wait_drive();
 
-  chassis.set_turn_pid(45, TURN_SPEED);
+  // Turn to face alliance oal
+  chassis.set_turn_pid(-48, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(-45, TURN_SPEED);
+  set_mogo_state(m::DOWN);
+  wait_mogo();
+
+  // Drive into alliance goal
+  chassis.set_drive_pid(-11, 80);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(0, TURN_SPEED);
+  set_mogo_state(m::UP);
+  wait_mogo();
+
+  // Drive forward
+  chassis.set_drive_pid(28, DRIVE_SPEED, true);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-}
-
-
-
-///
-// Wait Until and Changing Max Speed
-///
-void wait_until_change_speed() {
-  // wait_until will wait until the robot gets to a desired position
-
-
-  // When the robot gets to 6 inches, the robot will travel the remaining distance at a max speed of 40
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_until(6);
-  chassis.set_max_speed(40); // After driving 6 inches at DRIVE_SPEED, the robot will go the remaining distance at 40 speed
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(-45, TURN_SPEED);
-  chassis.wait_drive();
-
+  // Turn to face opponents home zone
   chassis.set_turn_pid(0, TURN_SPEED);
   chassis.wait_drive();
 
-  // When the robot gets to -6 inches, the robot will travel the remaining distance at a max speed of 40
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
-  chassis.wait_until(-6);
-  chassis.set_max_speed(40); // After driving 6 inches at DRIVE_SPEED, the robot will go the remaining distance at 40 speed
+  // Drive as far as possible with alliance goal still scored
+  chassis.set_drive_pid(14, DRIVE_SPEED, true);
   chassis.wait_drive();
+
 }
 
 
 
-///
-// Swing Example
-///
-void swing_example() {
-  // The first parameter is ez::LEFT_SWING or ez::RIGHT_SWING
-  // The second parameter is target degrees
-  // The third parameter is speed of the moving side of the drive
+void fuck_you_lucas() {
 
-
-  chassis.set_swing_pid(ez::LEFT_SWING, 45, SWING_SPEED);
+  chassis.set_drive_pid(58, 127);
+  chassis.wait_until(40);
+  chassis.set_max_speed(40);
+  chassis.wait_until(56);
+  claw_down();
   chassis.wait_drive();
 
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_until(12);
-
-  chassis.set_swing_pid(ez::RIGHT_SWING, 0, SWING_SPEED);
+  //set_drive_pid(drive, -24, 127);
+  chassis.set_swing_pid(ez::RIGHT_SWING, 152.5, 127);
+  chassis.wait_until(45);
+  chassis.set_max_speed(TURN_SPEED);
+  set_mogo_state(m::DOWN);
+  wait_mogo();
   chassis.wait_drive();
+
+  chassis.set_drive_pid(-26, 80);
+  chassis.wait_drive();
+
+  set_mogo_state(m::UP);
+  wait_mogo();
+
+  chassis.set_drive_pid(30, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(147, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(55, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  pros::delay(250);
+  claw_up();
+  pros::delay(250);
+
+  chassis.set_drive_pid(-10, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_turn_pid(22.5 + 7, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(33, DRIVE_SPEED, true);
+  set_mogo_state(m::DOWN);
+  wait_mogo();
+  chassis.wait_until(28);
+  chassis.set_max_speed(40);
+  claw_down();
+  chassis.wait_drive();
+
+  chassis.set_swing_pid(ez::LEFT_SWING, 22.5 + 7 - 45, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-18, DRIVE_SPEED, true);
+  chassis.wait_drive();
+
+  chassis.set_swing_pid(ez::RIGHT_SWING, 22.5 + 7, TURN_SPEED);
+  chassis.wait_drive();
+
+  chassis.set_drive_pid(-3, DRIVE_SPEED);
+  chassis.wait_drive();
+
+  claw_up();
+
+
 }
-
-
-
-///
-// Auto that tests everything
-///
-void combining_movements() {
-  chassis.set_drive_pid(24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_swing_pid(ez::RIGHT_SWING, -45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(0, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-24, DRIVE_SPEED, true);
-  chassis.wait_drive();
-}
-
-
-
-///
-// Interference example
-///
-void tug (int attempts) {
-  for (int i=0; i<attempts-1; i++) {
-    // Attempt to drive backwards
-    printf("i - %i", i);
-    chassis.set_drive_pid(-12, 127);
-    chassis.wait_drive();
-
-    // If failsafed...
-    if (chassis.interfered) {
-      chassis.reset_drive_sensor();
-      chassis.set_drive_pid(-2, 20);
-      pros::delay(1000);
-    }
-    // If robot successfully drove back, return
-    else {
-      return;
-    }
-  }
-}
-
-// If there is no interference, robot will drive forward and turn 90 degrees. 
-// If interfered, robot will drive forward and then attempt to drive backwards. 
-void interfered_example() {
- chassis.set_drive_pid(24, DRIVE_SPEED, true);
- chassis.wait_drive();
-
- if (chassis.interfered) {
-   tug(3);
-   return;
- }
-
- chassis.set_turn_pid(90, TURN_SPEED);
- chassis.wait_drive();
-}
-
-
-
-// . . .
-// Make your own autonomous functions here!
-// . . .

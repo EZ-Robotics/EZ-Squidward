@@ -82,15 +82,14 @@ void initialize() {
   // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
 
   // Autonomous Selector using LLEMU
+  std::string up = "\n\n\nStarting: Plat Up";
+  std::string down = "\n\n\nStarting: Plat Down";
   ez::as::auton_selector.add_autons({
-    Auton("\nDouble Center Steal\n\n\nStarting: Plat Up", double_steal),
-    Auton("Example Drive\n\nDrive forward and come back.", drive_example),
-    Auton("Example Turn\n\nTurn 3 times.", turn_example),
-    Auton("Drive and Turn\n\nDrive forward, turn, come back. ", drive_and_turn),
-    Auton("Drive and Turn\n\nSlow down during drive.", wait_until_change_speed),
-    Auton("Swing Example\n\nSwing, drive, swing.", swing_example),
-    Auton("Combine all 3 movements", combining_movements),
-    Auton("Interference\n\nAfter driving forward, robot performs differently if interfered or not.", interfered_example),
+    Auton("\nDouble Center Steal"+up, double_steal),
+    Auton("\nCenter Rush"+up, steal_one),
+    Auton("\nCenter Line RAM"+down, plat_down_center_hit),
+    Auton("\nCenter Rush"+down, plat_down_center),
+    Auton("FUCK YOU LUCAS\nFUCK YOU LUCAS\nFUCK YOU LUCAS\nFUCK YOU LUCAS\nFUCK YOU LUCAS\nFUCK YOU LUCAS\n", fuck_you_lucas),
   });
 
   // Initialize chassis and auton selector

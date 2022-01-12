@@ -19,17 +19,24 @@ void set_lift_state(lift_state input) {
 }
 
 void liftTask() {
-  double output;
+  double output = 0;
+  long timer = 0;
   while (true) {
     double current = lift_motor.get_position();
     double clipped_pid = util::clip_num(liftPID.compute(current), lift_max_speed, -lift_max_speed);
 
     if (current_lift_state == DOWN) {
-      if (current >= 10)
+      if (current >= 20)
         output = clipped_pid;
-      else
-        output = -10;
+      else {
+        if (lift_motor.get_actual_velocity() == 0 && !pros::competition::is_disabled()) timer += util::DELAY_TIME;
+        if (timer >= 250)
+          output = -3;
+        else
+          output = -40;
+      }
     } else {
+      timer = 0;
       output = clipped_pid;
     }
 

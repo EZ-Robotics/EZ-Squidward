@@ -19,11 +19,11 @@ void set_mogo_state(m::mogo_state input) {
 }
 
 void mogoTask() {
-  double output;
+  double output = 0;
   while (true) {
     double current = mogo_motor.get_position();
     double clipped_pid = util::clip_num(mogoPID.compute(current), mogo_max_speed, -mogo_max_speed);
-    
+
     output = clipped_pid;
 
     set_mogo(output);
