@@ -44,6 +44,12 @@
 #include "EZ-Template/api.hpp"
 #include "autons.hpp"
 
+// More includes here...
+#include "lift.hpp"
+#include "mogo.hpp"
+#include "claw.hpp"
+// . . .
+
 /**
  * If you find doing pros::Motor() to be tedious and you'd prefer just to do
  * Motor, you can use the namespace with the following commented out line.
