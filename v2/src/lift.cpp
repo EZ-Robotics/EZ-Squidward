@@ -2,7 +2,7 @@
 
 using namespace ez;
 
-PID liftPID{1, 0, 0, 0, "Lift"};
+PID liftPID{4, 0, 0, 0, "Lift"};
 pros::Motor lift_motor(1, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES);
 int lift_max_speed = 127;
 void set_lift_speed(int input) { lift_max_speed = abs(input); }
@@ -11,11 +11,26 @@ void reset_lift() { lift_motor.tare_position(); }
 
 void set_lift_exit() { liftPID.set_exit_condition(80, 20, 300, 50, 500, 500); }
 
+std::string lift_state_to_string(lift_state input) {
+  switch (input) {
+    case DOWN:
+      return "Down";
+      break;
+    case UP:
+      return "Up";
+      break;
+    default:
+      return "Out of bounds lift state";
+      break;
+  }
+}
+
 lift_state current_lift_state;
 void set_lift_state(lift_state input) {
   current_lift_state = input;
   liftPID.set_target(input);
-  printf("%i\n", input);
+  set_lift_speed(input == UP ? 127 : 100);
+  std::cout << "New Lift State: " << lift_state_to_string(input) << "\n";
 }
 
 void liftTask() {
@@ -30,15 +45,18 @@ void liftTask() {
         output = clipped_pid;
       else {
         if (lift_motor.get_actual_velocity() == 0 && !pros::competition::is_disabled()) timer += util::DELAY_TIME;
-        if (timer >= 250)
+        if (timer >= 250) {
           output = -3;
-        else
+          reset_lift();
+        } else
           output = -40;
       }
     } else {
       timer = 0;
       output = clipped_pid;
     }
+
+    if (pros::competition::is_disabled()) timer = 0;
 
     set_lift(output);
 

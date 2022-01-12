@@ -11,11 +11,26 @@ void reset_mogo() { mogo_motor.tare_position(); }
 
 void set_mogo_exit() { mogoPID.set_exit_condition(80, 20, 300, 50, 500, 500); }
 
+std::string mogo_state_to_string(m::mogo_state input) {
+  switch (input) {
+    case m::DOWN:
+      return "Down";
+      break;
+    case m::UP:
+      return "Up";
+      break;
+    default:
+      return "Out of bounds lift state";
+      break;
+  }
+}
+
 m::mogo_state current_mogo_state;
 void set_mogo_state(m::mogo_state input) {
   current_mogo_state = input;
   mogoPID.set_target(input);
-  printf("%i\n", input);
+
+  std::cout << "New Mogo State: " << mogo_state_to_string(input) << "\n";
 }
 
 void mogoTask() {
