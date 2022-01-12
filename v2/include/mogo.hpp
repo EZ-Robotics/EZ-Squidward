@@ -3,8 +3,8 @@
 
 namespace m {
 enum mogo_state {
-  DOWN = 530,
-  UP = 80
+  DOWN = 600, //560
+  UP = 65 // 80
 };
 }
 

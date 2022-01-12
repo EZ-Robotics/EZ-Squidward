@@ -2,8 +2,8 @@
 
 using namespace ez;
 
-PID mogoPID{1, 0, 0, 0, "Mogo"};
-pros::Motor mogo_motor(10, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES);
+PID mogoPID{3, 0, 0, 0, "Mogo"};
+pros::Motor mogo_motor(10, MOTOR_GEARSET_36, true, MOTOR_ENCODER_DEGREES);
 int mogo_max_speed = 127;
 void set_mogo_speed(int input) { mogo_max_speed = abs(input); }
 void set_mogo(int input) { mogo_motor = input; }
@@ -23,17 +23,7 @@ void mogoTask() {
   while (true) {
     double current = mogo_motor.get_position();
     double clipped_pid = util::clip_num(mogoPID.compute(current), mogo_max_speed, -mogo_max_speed);
-
-/*
-    if (current_mogo_state == m::DOWN) {
-      if (current >= 20)
-        output = clipped_pid;
-      else
-        output = -5;
-    } else {
-      output = clipped_pid;
-    }
-    */
+    
     output = clipped_pid;
 
     set_mogo(output);

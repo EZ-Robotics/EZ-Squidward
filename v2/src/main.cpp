@@ -69,6 +69,8 @@ void initialize() {
   chassis.set_active_brake(0.05); // Sets the active brake kP. We recommend 0.1.
   chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
   default_constants(); // Set the drive to your own constants from autons.cpp!
+  reset_lift();
+  reset_mogo();
   set_lift_exit();
   set_mogo_exit();
   claw_up();

@@ -72,15 +72,16 @@ void double_steal() {
 
   // Drive towards center goal
   claw_up();
-  chassis.set_drive_pid(45, 127);
+  chassis.set_drive_pid(47, 127);
   // Slow down when close to center
   chassis.wait_until(40);
   chassis.set_max_speed(40);
+  chassis.wait_until(43);
   claw_down();
   chassis.wait_drive();
 
   // Drive back with goal
-  chassis.set_drive_pid(-36, 127, true);
+  chassis.set_drive_pid(-38, 127, true);
   // Release goal during drive back
   chassis.wait_until(-14);
   chassis.set_max_speed(DRIVE_SPEED);
@@ -88,19 +89,20 @@ void double_steal() {
   chassis.wait_drive();
 
   // Turn to face center goal
-  chassis.set_turn_pid(-35, TURN_SPEED);
+  chassis.set_turn_pid(-36, TURN_SPEED);
   chassis.wait_drive();
 
   // Drive towards center goal
   chassis.set_drive_pid(53, 127);
   set_lift_state(DOWN);
+  chassis.wait_until(43);
+  chassis.set_max_speed(30);
   chassis.wait_until(48);
-  chassis.set_max_speed(40);
   claw_down();
   chassis.wait_drive();
 
   // Drive back with goal
-  chassis.set_drive_pid(-40, 127, true);
+  chassis.set_drive_pid(-38, 127, true);
   // Release goal during drive back
   chassis.wait_until(-27);
   chassis.set_max_speed(60);
@@ -110,18 +112,18 @@ void double_steal() {
   pros::delay(250);
 
   // Turn to face alliance goal
-  chassis.set_drive_pid(-90, TURN_SPEED);
+  chassis.set_turn_pid(-90, TURN_SPEED);
   set_mogo_state(m::DOWN);
   chassis.wait_drive();
 
   // Drive into goal
-  chassis.set_drive_pid(-19, 80, true);
+  chassis.set_drive_pid(-19, 65, true);
   chassis.wait_drive();
   set_mogo_state(m::UP);
   wait_mogo();
 
   // Turn to corner
-  chassis.set_drive_pid(ez::LEFT_SWING, -180, SWING_SPEED);
+  chassis.set_swing_pid(ez::LEFT_SWING, -180, SWING_SPEED);
   chassis.wait_drive();
 
   // Drive into corner
@@ -137,7 +139,7 @@ void double_steal() {
   chassis.set_drive_pid(-27, DRIVE_SPEED, true);
   chassis.wait_drive();
 
-  chassis.set_turn_pid(-360, TURN_SPEED);
+  chassis.set_turn_pid(-360, 80);
   chassis.wait_drive();
 
 }

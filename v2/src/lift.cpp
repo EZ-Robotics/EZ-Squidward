@@ -25,10 +25,10 @@ void liftTask() {
     double clipped_pid = util::clip_num(liftPID.compute(current), lift_max_speed, -lift_max_speed);
 
     if (current_lift_state == DOWN) {
-      if (current >= 20)
+      if (current >= 10)
         output = clipped_pid;
       else
-        output = -5;
+        output = -10;
     } else {
       output = clipped_pid;
     }
