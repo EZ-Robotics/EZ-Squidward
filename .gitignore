@@ -7,6 +7,7 @@
 *.elf
 
 # PROS
+.cache/
 bin/
 .vscode/
 compile_commands.json
@@ -14,39 +15,3 @@ temp.log
 temp.errors
 *.ini
 .d/
-
-# Compiled Object files
-v2/*.o
-v2/*.obj
-
-# Executables
-v2/*.bin
-v2/*.elf
-
-# PROS
-v2/.cache/
-v2/bin/
-v2/.vscode/
-v2/compile_commands.json
-v2/temp.log
-v2/temp.errors
-v2/*.ini
-v2/.d/
-
-# Compiled Object files
-v1/*.o
-v1/*.obj
-
-# Executables
-v1/*.bin
-v1/*.elf
-
-# PROS
-v1/.cache/
-v1/bin/
-v1/.vscode/
-v1/compile_commands.json
-v1/temp.log
-v1/temp.errors
-v1/*.ini
-v1/.d/
