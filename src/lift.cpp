@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pros/adi.hpp"
 
 using namespace ez;
 
@@ -16,6 +17,9 @@ std::string lift_state_to_string(lift_state input) {
     case DOWN:
       return "Down";
       break;
+    case MID:
+      return "Mid";
+      break;
     case UP:
       return "Up";
       break;
@@ -29,7 +33,7 @@ lift_state current_lift_state;
 void set_lift_state(lift_state input) {
   current_lift_state = input;
   liftPID.set_target(input);
-  set_lift_speed(input == UP ? 127 : 100);
+  set_lift_speed(input == UP || input == MID ? 127 : 100);
   std::cout << "New Lift State: " << lift_state_to_string(input) << "\n";
 }
 
@@ -75,7 +79,7 @@ void wait_lift() {
 bool l1_lock = 1;
 void lift_control() {
   if (master.get_digital(DIGITAL_L1) && l1_lock == 1) {
-    if (current_lift_state == UP)
+    if (current_lift_state == UP || current_lift_state == MID)
       set_lift_state(DOWN);
     else
       set_lift_state(UP);
@@ -83,4 +87,7 @@ void lift_control() {
   } else if (!master.get_digital(DIGITAL_L1) && l1_lock == 0) {
     l1_lock = 1;
   }
+
+  if (master.get_digital(DIGITAL_R2))
+    set_lift_state(MID);
 }

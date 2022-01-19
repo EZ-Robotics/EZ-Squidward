@@ -3,6 +3,7 @@
 
 enum lift_state {
   DOWN = 0,
+  MID = 460,
   UP = 700
 };
 
