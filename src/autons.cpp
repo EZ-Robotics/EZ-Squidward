@@ -276,22 +276,28 @@ void plat_down_center_hit() {
 
 void plat_down_center() {
 
-  // Turn to face goal
-  chassis.set_turn_pid(12, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Send it
-  chassis.set_drive_pid(58, 127);
-  chassis.wait_until(42);
-  claw_down();
-  chassis.set_max_speed(DRIVE_SPEED);
-  chassis.wait_drive();
-
-  // Come bcak with goal
-  chassis.set_drive_pid(-46, 127);
-  chassis.wait_until(-24);
-  chassis.set_max_speed(DRIVE_SPEED);
+  // Drive towards center goal
   claw_up();
+  chassis.set_drive_pid(47, 127);
+  // Slow down when close to center
+  chassis.wait_until(40);
+  chassis.set_max_speed(40);
+  chassis.wait_until(43);
+  claw_down();
+  chassis.wait_drive();
+
+  // Drive back with goal
+  chassis.set_drive_pid(-38, 127, true);
+  // Release goal during drive back
+  chassis.wait_until(-14);
+
+  // Check if interfered while driving back
+  if (chassis.interfered) {
+   tug(5);
+   return;
+ }
+
+  chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
 
   // Turn to face alliance oal
@@ -309,16 +315,21 @@ void plat_down_center() {
   wait_mogo();
 
   // Drive forward
-  chassis.set_drive_pid(28, DRIVE_SPEED, true);
+  chassis.set_drive_pid(20, DRIVE_SPEED, true);
   chassis.wait_drive();
 
+
   // Turn to face opponents home zone
-  chassis.set_turn_pid(0, TURN_SPEED);
+  chassis.set_turn_pid(10, TURN_SPEED);
   chassis.wait_drive();
+
+  /*
 
   // Drive as far as possible with alliance goal still scored
   chassis.set_drive_pid(14, DRIVE_SPEED, true);
   chassis.wait_drive();
+
+  */
 
 }
 
