@@ -29,12 +29,29 @@ m::mogo_state current_mogo_state;
 void set_mogo_state(m::mogo_state input) {
   current_mogo_state = input;
   mogoPID.set_target(input);
-  std::cout << "New Mogo State: " << mogo_state_to_string(input) << "\n";
+  std::cout << "\nNew Mogo State: " << mogo_state_to_string(input);
+}
+
+void zero_mogo() {
+  if (pros::competition::is_disabled()) return;
+
+  set_mogo(-60);
+  int timer = 0;
+  while (true) {
+    if (mogo_motor.get_actual_velocity() == 0) timer+=util::DELAY_TIME;
+    if (timer >= 250) 
+      break;
+
+    pros::delay(util::DELAY_TIME);
+  }
+  set_mogo(0);
+  reset_mogo();
 }
 
 void mogoTask() {
   double output = 0;
   long timer = 0;
+  zero_mogo();
   while (true) {
     double current = mogo_motor.get_position();
     double clipped_pid = util::clip_num(mogoPID.compute(current), mogo_max_speed, -mogo_max_speed);
@@ -69,15 +86,13 @@ void wait_mogo() {
   }
 }
 
-bool r1_lock = 1;
+bool last_r1 = 0;
 void mogo_control() {
-  if (master.get_digital(DIGITAL_R1) && r1_lock == 1) {
+  if (master.get_digital(DIGITAL_R1) && last_r1 == 0) {
     if (current_mogo_state == m::UP)
       set_mogo_state(m::DOWN);
     else
       set_mogo_state(m::UP);
-    r1_lock = 0;
-  } else if (!master.get_digital(DIGITAL_R1) && r1_lock == 0) {
-    r1_lock = 1;
-  }
+  } 
+  last_r1 = master.get_digital(DIGITAL_R1);
 }

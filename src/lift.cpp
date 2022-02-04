@@ -3,6 +3,9 @@
 
 using namespace ez;
 
+const int SLOW_SPEED = 100;
+const int FAST_SPEED = 127;
+
 PID liftPID{4, 0, 0, 0, "Lift"};
 pros::Motor lift_motor(1, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES);
 int lift_max_speed = 127;
@@ -31,15 +34,16 @@ std::string lift_state_to_string(lift_state input) {
 
 lift_state current_lift_state;
 void set_lift_state(lift_state input) {
+  set_lift_speed(current_lift_state > input ? SLOW_SPEED : FAST_SPEED);
   current_lift_state = input;
   liftPID.set_target(input);
-  set_lift_speed(input == UP || input == MID ? 127 : 100);
-  std::cout << "New Lift State: " << lift_state_to_string(input) << "\n";
+  std::cout << "\nNew Lift State: " << lift_state_to_string(input);
 }
 
 void liftTask() {
   double output = 0;
   long timer = 0;
+  bool did_reset = false;
   while (true) {
     double current = lift_motor.get_position();
     double clipped_pid = util::clip_num(liftPID.compute(current), lift_max_speed, -lift_max_speed);
@@ -48,16 +52,20 @@ void liftTask() {
       if (current >= 20)
         output = clipped_pid;
       else {
-        if (lift_motor.get_actual_velocity() == 0 && !pros::competition::is_disabled()) timer += util::DELAY_TIME;
+        bool check = (lift_motor.get_actual_velocity() == 0 && !pros::competition::is_disabled()) ? true : false;
+        if (check) timer += util::DELAY_TIME;
         if (timer >= 250) {
           output = -3;
-          reset_lift();
+          if (!did_reset) reset_lift();
+          did_reset = true;
           timer = 250;
-        } else
+        } else {
           output = -40;
+        }
       }
     } else {
       timer = 0;
+      did_reset = false;
       output = clipped_pid;
     }
 
@@ -76,18 +84,18 @@ void wait_lift() {
   }
 }
 
-bool l1_lock = 1;
+bool last_l1 = 0;
+bool last_r2 = 0;
 void lift_control() {
-  if (master.get_digital(DIGITAL_L1) && l1_lock == 1) {
+  if (master.get_digital(DIGITAL_L1) && last_l1 == 0) {
     if (current_lift_state == UP || current_lift_state == MID)
       set_lift_state(DOWN);
     else
       set_lift_state(UP);
-    l1_lock = 0;
-  } else if (!master.get_digital(DIGITAL_L1) && l1_lock == 0) {
-    l1_lock = 1;
   }
+  last_l1 = master.get_digital(DIGITAL_L1);
 
-  if (master.get_digital(DIGITAL_R2))
+  if (master.get_digital(DIGITAL_R2) && last_r2 == 0)
     set_lift_state(MID);
+  last_r2 = master.get_digital(DIGITAL_R2);
 }

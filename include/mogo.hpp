@@ -16,3 +16,5 @@ void set_mogo_state(m::mogo_state input);
 void wait_mogo();
 
 void mogo_control();
+
+void zero_mogo();
