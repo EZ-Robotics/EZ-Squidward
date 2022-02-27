@@ -1,6 +1,5 @@
 #include "main.h"
 #include "lift.hpp"
-#include "mogo.hpp"
 
 
 /////
@@ -14,14 +13,14 @@
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {-7, -8, 9}
+  {-20, -19, -18}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{4, 3, -2}
+  ,{11, 12, 13}
 
   // IMU Port
-  ,11
+  ,2
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
@@ -70,13 +69,8 @@ void initialize() {
   chassis.set_active_brake(0.05); // Sets the active brake kP. We recommend 0.1.
   chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
   default_constants(); // Set the drive to your own constants from autons.cpp!
-  reset_lift();
-  reset_mogo();
   set_lift_exit();
-  set_mogo_exit();
-  claw_up();
-  set_lift_state(DOWN);
-  set_mogo_state(m::UP);
+  set_lift_state(FAST_DOWN);
 
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
   // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
@@ -139,12 +133,12 @@ void competition_initialize() {
  */
 void autonomous() {
   claw_up();
+  sd_state_1();
+  set_lift_state(FAST_DOWN);
   chassis.reset_pid_targets(); // Resets PID targets to 0
   chassis.reset_gyro(); // Reset gyro position to 0
   chassis.reset_drive_sensor(); // Reset drive sensors to 0
   chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
-  set_lift_state(DOWN);
-  set_mogo_state(m::UP);
 
 
   ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
@@ -179,8 +173,8 @@ void opcontrol() {
 
     lift_control();
     claw_control();
-    mogo_control();
-
+    dougie_control();
+ 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
 }

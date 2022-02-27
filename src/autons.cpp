@@ -68,7 +68,6 @@ void modified_exit_condition() {
 void tug (int attempts) {
   for (int i=0; i<attempts-1; i++) {
     // Attempt to drive backwards
-    printf("i - %i", i);
     chassis.set_drive_pid(-12, 127);
     chassis.wait_drive();
 
@@ -151,14 +150,14 @@ void double_steal() {
 
   // Turn to face alliance goal
   chassis.set_turn_pid(-90, TURN_SPEED);
-  set_mogo_state(m::DOWN);
+  //set_mogo_state(m::DOWN);
   chassis.wait_drive();
 
   // Drive into goal
   chassis.set_drive_pid(-19, 65, true);
   chassis.wait_drive();
-  set_mogo_state(m::UP);
-  wait_mogo();
+  //set_mogo_state(m::UP);
+  //wait_mogo();
 
   // Turn to corner
   chassis.set_swing_pid(ez::LEFT_SWING, -180, SWING_SPEED);
@@ -206,7 +205,7 @@ void steal_one() {
   chassis.set_drive_pid(27, 127, true);
   chassis.wait_until(20);
   chassis.set_max_speed(DRIVE_SPEED);
-  set_mogo_state(m::DOWN);
+  //set_mogo_state(m::DOWN);
   chassis.wait_drive();
 
   // Turn to face alliance goal
@@ -216,8 +215,8 @@ void steal_one() {
   // Drive into alliance goal
   chassis.set_drive_pid(-14, 50, true);
   chassis.wait_drive();
-  set_mogo_state(m::UP);
-  wait_mogo();
+  //set_mogo_state(m::UP);
+  //wait_mogo();
 
   // Swing to corner
   chassis.set_swing_pid(ez::LEFT_SWING, -180, TURN_SPEED);
@@ -304,15 +303,15 @@ void plat_down_center() {
   chassis.set_turn_pid(-48, TURN_SPEED);
   chassis.wait_drive();
 
-  set_mogo_state(m::DOWN);
-  wait_mogo();
+  //set_mogo_state(m::DOWN);
+  //wait_mogo();
 
   // Drive into alliance goal
   chassis.set_drive_pid(-11, 80);
   chassis.wait_drive();
 
-  set_mogo_state(m::UP);
-  wait_mogo();
+  //set_mogo_state(m::UP);
+  //wait_mogo();
 
   // Drive forward
   chassis.set_drive_pid(20, DRIVE_SPEED, true);
@@ -348,15 +347,15 @@ void dislike_you_lucas() {
   chassis.set_swing_pid(ez::RIGHT_SWING, 152.5, 127);
   chassis.wait_until(45);
   chassis.set_max_speed(TURN_SPEED);
-  set_mogo_state(m::DOWN);
-  wait_mogo();
+  //set_mogo_state(m::DOWN);
+  //wait_mogo();
   chassis.wait_drive();
 
   chassis.set_drive_pid(-26, 80);
   chassis.wait_drive();
 
-  set_mogo_state(m::UP);
-  wait_mogo();
+  //set_mogo_state(m::UP);
+  //wait_mogo();
 
   chassis.set_drive_pid(30, DRIVE_SPEED, true);
   chassis.wait_drive();
@@ -378,8 +377,8 @@ void dislike_you_lucas() {
   chassis.wait_drive();
 
   chassis.set_drive_pid(33, DRIVE_SPEED, true);
-  set_mogo_state(m::DOWN);
-  wait_mogo();
+  //set_mogo_state(m::DOWN);
+  //wait_mogo();
   chassis.wait_until(28);
   chassis.set_max_speed(40);
   claw_down();

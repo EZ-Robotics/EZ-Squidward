@@ -1,6 +1,6 @@
 #include "main.h"
 
-pros::ADIDigitalOut claw(1);
+pros::ADIDigitalOut claw('G');
 
 void set_claw(bool in) { claw.set_value(in); }
 
@@ -14,14 +14,12 @@ void claw_down() {
   claw_state = false;
 }
 
-int last_l2 = 0;
 void claw_control() {
-  if (master.get_digital(DIGITAL_L2) && last_l2 == 0) {
+  if (master.get_digital_new_press(DIGITAL_R1)) {
     claw_state = !claw_state;
-    if (claw_state) 
+    if (claw_state)
       claw_up();
-    else 
+    else
       claw_down();
   }
-  last_l2 = master.get_digital(DIGITAL_L2);
 }

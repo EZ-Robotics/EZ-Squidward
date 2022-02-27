@@ -6,17 +6,33 @@ using namespace ez;
 const int SLOW_SPEED = 100;
 const int FAST_SPEED = 127;
 
-PID liftPID{4, 0, 0, 0, "Lift"};
-pros::Motor lift_motor(1, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES);
+PID r_liftPID{4, 0, 0, 0, "Right Lift"};
+PID l_liftPID{4, 0, 0, 0, "Left Lift"};
+pros::Motor r_lift_motor(1, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES);
+pros::Motor l_lift_motor(10, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES);
 int lift_max_speed = 127;
 void set_lift_speed(int input) { lift_max_speed = abs(input); }
-void set_lift(int input) { lift_motor = input; }
-void reset_lift() { lift_motor.tare_position(); }
 
-void set_lift_exit() { liftPID.set_exit_condition(80, 20, 300, 50, 500, 500); }
+void set_lift(int left, int right) {
+  r_lift_motor = right;
+  l_lift_motor = left;
+}
+
+void reset_lift() {
+  l_lift_motor.tare_position();
+  r_lift_motor.tare_position();
+}
+
+void set_lift_exit() {
+  r_liftPID.set_exit_condition(80, 20, 300, 50, 500, 500);
+  l_liftPID.set_exit_condition(80, 20, 300, 50, 500, 500);
+}
 
 std::string lift_state_to_string(lift_state input) {
   switch (input) {
+    case FAST_DOWN:
+      return "Fast Down";
+      break;
     case DOWN:
       return "Down";
       break;
@@ -36,42 +52,55 @@ lift_state current_lift_state;
 void set_lift_state(lift_state input) {
   set_lift_speed(current_lift_state > input ? SLOW_SPEED : FAST_SPEED);
   current_lift_state = input;
-  liftPID.set_target(input);
+  r_liftPID.set_target(input);
+  l_liftPID.set_target(input);
   std::cout << "\nNew Lift State: " << lift_state_to_string(input);
 }
 
 void liftTask() {
-  double output = 0;
+  double l_output = 0, r_output = 0;
   long timer = 0;
   bool did_reset = false;
   while (true) {
-    double current = lift_motor.get_position();
-    double clipped_pid = util::clip_num(liftPID.compute(current), lift_max_speed, -lift_max_speed);
+    double l_current = l_lift_motor.get_position();
+    double r_current = r_lift_motor.get_position();
 
-    if (current_lift_state == DOWN) {
-      if (current >= 20)
-        output = clipped_pid;
-      else {
-        bool check = (lift_motor.get_actual_velocity() == 0 && !pros::competition::is_disabled()) ? true : false;
+    double l_clipped_pid = util::clip_num(l_liftPID.compute(l_current), lift_max_speed, -lift_max_speed);
+    double r_clipped_pid = util::clip_num(r_liftPID.compute(r_current), lift_max_speed, -lift_max_speed);
+
+    if (current_lift_state == DOWN || current_lift_state == FAST_DOWN) {
+      if (l_current >= 10 || r_current >= 10) {
+        l_output = l_clipped_pid;
+        r_output = r_clipped_pid;
+      } else {
+        bool check = ((r_lift_motor.get_actual_velocity() == 0 || l_lift_motor.get_actual_velocity() == 0) && !pros::competition::is_disabled()) ? true : false;
         if (check) timer += util::DELAY_TIME;
         if (timer >= 250) {
-          output = -3;
+          l_output = -4;
+          r_output = -4;
           if (!did_reset) reset_lift();
           did_reset = true;
           timer = 250;
         } else {
-          output = -40;
+          if (current_lift_state == DOWN) {
+            l_output = -50;
+            r_output = -50;
+          } else {
+            l_output = -100;
+            r_output = -100;
+          }
         }
       }
     } else {
       timer = 0;
       did_reset = false;
-      output = clipped_pid;
+      l_output = l_clipped_pid;
+      r_output = r_clipped_pid;
     }
 
     if (pros::competition::is_disabled()) timer = 0;
 
-    set_lift(output);
+    set_lift(l_output, r_output);
 
     pros::delay(util::DELAY_TIME);
   }
@@ -79,23 +108,19 @@ void liftTask() {
 pros::Task lift_task(liftTask);
 
 void wait_lift() {
-  while (liftPID.exit_condition(lift_motor, true) == ez::RUNNING) {
+  while (r_liftPID.exit_condition(r_lift_motor, true) == ez::RUNNING) {
     pros::delay(ez::util::DELAY_TIME);
   }
 }
 
-bool last_l1 = 0;
-bool last_r2 = 0;
 void lift_control() {
-  if (master.get_digital(DIGITAL_L1) && last_l1 == 0) {
+  if (master.get_digital_new_press(DIGITAL_L1)) {
     if (current_lift_state == UP || current_lift_state == MID)
       set_lift_state(DOWN);
     else
       set_lift_state(UP);
   }
-  last_l1 = master.get_digital(DIGITAL_L1);
 
-  if (master.get_digital(DIGITAL_R2) && last_r2 == 0)
+  if (master.get_digital(DIGITAL_L2))
     set_lift_state(MID);
-  last_r2 = master.get_digital(DIGITAL_R2);
 }
