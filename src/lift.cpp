@@ -3,7 +3,7 @@
 
 using namespace ez;
 
-const int SLOW_SPEED = 100;
+const int SLOW_SPEED = 80;
 const int FAST_SPEED = 127;
 
 PID r_liftPID{4, 0, 0, 0, "Right Lift"};

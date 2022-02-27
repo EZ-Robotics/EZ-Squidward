@@ -81,10 +81,8 @@ void initialize() {
   std::string down = "\n\n\nStarting: Plat Down";
   ez::as::auton_selector.add_autons({
     Auton("\nDouble Center Steal"+up, double_steal), 
-    Auton("\nCenter Rush"+up, steal_one),
-    Auton("\nCenter Line RAM"+down, plat_down_center_hit),
     Auton("\nCenter Rush"+down, plat_down_center),
-    Auton("Lucas, I dislike you.", dislike_you_lucas),
+    Auton("\nCenter Rush"+up, steal_one),
   });
 
   // Initialize chassis and auton selector
