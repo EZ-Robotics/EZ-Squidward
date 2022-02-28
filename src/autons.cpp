@@ -105,6 +105,11 @@ void double_steal() {
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
 
+  if (chassis.interfered) {
+    tug(5);
+    return;
+  }
+
   chassis.set_turn_pid(-120, TURN_SPEED);
   chassis.wait_drive();
 
@@ -112,6 +117,11 @@ void double_steal() {
   chassis.wait_until(-24);
   chassis.set_max_speed(50);
   chassis.wait_drive();
+
+  if (chassis.interfered) {
+    tug(5);
+    return;
+  }
   
   sd_state_2();
   pros::delay(100);
@@ -120,6 +130,11 @@ void double_steal() {
   pros::delay(100);
   sd_state_3();
   chassis.wait_drive();
+
+  if (chassis.interfered) {
+    tug(5);
+    return;
+  }
 
   chassis.set_drive_pid(37, DRIVE_SPEED, true);
   chassis.wait_drive();
@@ -140,112 +155,6 @@ void double_steal() {
   chassis.set_turn_pid(-342, TURN_SPEED);
   chassis.wait_drive();
 
-
-  /*
-
-  //chassis.set_swing_pid(ez::LEFT_SWING, -90, SWING_SPEED);
-  chassis.set_turn_pid(-90, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-15, 60);
-  chassis.wait_drive();
-
-  pros::delay(100);
-  sd_state_2();
-  pros::delay(100);
-
-  chassis.set_turn_pid(0, TURN_SPEED);
-  sd_state_3();
-  chassis.wait_drive();
-  */
-
-/*
-  // Drive towards center goal
-  claw_up();
-  chassis.set_drive_pid(47, 127);
-  // Slow down when close to center
-  chassis.wait_until(40);
-  chassis.set_max_speed(40);
-  chassis.wait_until(43);
-  claw_down();
-  chassis.wait_drive();
-
-  // Drive back with goal
-  chassis.set_drive_pid(-38, 127, true);
-  // Release goal during drive back
-  chassis.wait_until(-14);
-
-  // Check if interfered while driving back
-  if (chassis.interfered) {
-   tug(5);
-   return;
- }
-
-  chassis.set_max_speed(DRIVE_SPEED);
-  claw_up();
-  chassis.wait_drive();
-
-  // Turn to face center goal
-  chassis.set_turn_pid(-36, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Drive towards center goal
-  chassis.set_drive_pid(53, 127);
-  set_lift_state(DOWN);
-  chassis.wait_until(43);
-  chassis.set_max_speed(30);
-  chassis.wait_until(48);
-  claw_down();
-  chassis.wait_drive();
-
-  // Drive back with goal
-  chassis.set_drive_pid(-38, 127, true);
-  // Release goal during drive back
-  chassis.wait_until(-27);
-
-  // Check if interfered while driving back
-  if (chassis.interfered) {
-   tug(5);
-   return;
- }
-
-  chassis.set_max_speed(60);
-  //lift_lil_down(true);       ////////////////////
-  // claw_up();
-  chassis.wait_drive();
-  pros::delay(250);
-
-  // Turn to face alliance goal
-  chassis.set_turn_pid(-90, TURN_SPEED);
-  //set_mogo_state(m::DOWN);
-  chassis.wait_drive();
-
-  // Drive into goal
-  chassis.set_drive_pid(-19, 65, true);
-  chassis.wait_drive();
-  //set_mogo_state(m::UP);
-  //wait_mogo();
-
-  // Turn to corner
-  chassis.set_swing_pid(ez::LEFT_SWING, -180, SWING_SPEED);
-  chassis.wait_drive();
-
-  // Drive into corner
-  chassis.set_drive_pid(17, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // Release goal
-  pros::delay(100);
-  claw_up();
-  pros::delay(500);
-
-  // Drive away
-  chassis.set_drive_pid(-27, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(-360, 80);
-  chassis.wait_drive();
-*/
 }
 
 
@@ -263,6 +172,11 @@ void steal_one() {
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
 
+  if (chassis.interfered) {
+    tug(5);
+    return;
+  }
+
   //chassis.set_swing_pid(ez::LEFT_SWING, -90, SWING_SPEED);
   chassis.set_turn_pid(-90, TURN_SPEED);
   chassis.wait_drive();
@@ -276,36 +190,6 @@ void steal_one() {
 
   chassis.set_turn_pid(0, TURN_SPEED);
   sd_state_3();
-  chassis.wait_drive();
-
-}
-
-
-
-void plat_down_center_hit() {
-
-  // Tunr to face center
-  chassis.set_drive_pid(12, TURN_SPEED);
-  chassis.wait_drive();
-
-  // Drive into goal
-  chassis.set_drive_pid(56, 127);
-  chassis.wait_until(42);
-  claw_down();
-  chassis.set_max_speed(DRIVE_SPEED);
-  chassis.wait_drive();
-
-  // Swing to face centerline
-  chassis.set_swing_pid(ez::LEFT_SWING, 90, TURN_SPEED);
-  chassis.wait_drive();
-
-
-  // FULL SEND
-  chassis.set_drive_pid(62, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  // back up a little to block :)
-  chassis.set_drive_pid(-12, DRIVE_SPEED);
   chassis.wait_drive();
 
 }
@@ -325,7 +209,12 @@ void plat_down_center() {
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
 
-   chassis.set_swing_pid(ez::LEFT_SWING, -55, SWING_SPEED);
+  if (chassis.interfered) {
+    tug(5);
+    return;
+  }
+
+  chassis.set_swing_pid(ez::LEFT_SWING, -55, SWING_SPEED);
   chassis.wait_drive();
 
   chassis.set_drive_pid(-6, 60);
@@ -344,73 +233,5 @@ void plat_down_center() {
 
   chassis.set_drive_pid(12, DRIVE_SPEED, true);
   chassis.wait_drive();
-}
-
-
-
-void dislike_you_lucas() {
-
-  chassis.set_drive_pid(58, 127);
-  chassis.wait_until(40);
-  chassis.set_max_speed(40);
-  chassis.wait_until(56);
-  claw_down();
-  chassis.wait_drive();
-
-  //set_drive_pid(drive, -24, 127);
-  chassis.set_swing_pid(ez::RIGHT_SWING, 152.5, 127);
-  chassis.wait_until(45);
-  chassis.set_max_speed(TURN_SPEED);
-  //set_mogo_state(m::DOWN);
-  //wait_mogo();
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-26, 80);
-  chassis.wait_drive();
-
-  //set_mogo_state(m::UP);
-  //wait_mogo();
-
-  chassis.set_drive_pid(30, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(147, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(55, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  pros::delay(250);
-  claw_up();
-  pros::delay(250);
-
-  chassis.set_drive_pid(-10, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_turn_pid(22.5 + 7, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(33, DRIVE_SPEED, true);
-  //set_mogo_state(m::DOWN);
-  //wait_mogo();
-  chassis.wait_until(28);
-  chassis.set_max_speed(40);
-  claw_down();
-  chassis.wait_drive();
-
-  chassis.set_swing_pid(ez::LEFT_SWING, 22.5 + 7 - 45, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-18, DRIVE_SPEED, true);
-  chassis.wait_drive();
-
-  chassis.set_swing_pid(ez::RIGHT_SWING, 22.5 + 7, TURN_SPEED);
-  chassis.wait_drive();
-
-  chassis.set_drive_pid(-3, DRIVE_SPEED);
-  chassis.wait_drive();
-
-  claw_up();
-
 
 }

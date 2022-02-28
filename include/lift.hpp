@@ -4,7 +4,7 @@
 enum lift_state {
   FAST_DOWN = -1,
   DOWN = 0,
-  MID = 230,
+  MID = 260,
   UP = 330
 };
 
