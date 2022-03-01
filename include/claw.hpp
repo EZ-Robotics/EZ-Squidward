@@ -1,6 +1,7 @@
 #pragma once
+#include "EZ-Template/piston.hpp"
 
-inline bool claw_state = false;
+inline Piston claw('G');
 
 void claw_up();
 void claw_down();

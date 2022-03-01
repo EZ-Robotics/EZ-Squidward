@@ -69,7 +69,7 @@ void liftTask() {
     double r_clipped_pid = util::clip_num(r_liftPID.compute(r_current), lift_max_speed, -lift_max_speed);
 
     if (current_lift_state == DOWN || current_lift_state == FAST_DOWN) {
-      if (l_current >= 10 || r_current >= 10) {
+      if (l_current >= 13 || r_current >= 13) {
         l_output = l_clipped_pid;
         r_output = r_clipped_pid;
       } else {
@@ -82,13 +82,9 @@ void liftTask() {
           did_reset = true;
           timer = 250;
         } else {
-          if (current_lift_state == DOWN) {
-            l_output = -50;
-            r_output = -50;
-          } else {
-            l_output = -100;
-            r_output = -100;
-          }
+          int speed = current_lift_state == DOWN ? -50 : -100;
+          l_output = speed;
+          r_output = speed;
         }
       }
     } else {
@@ -121,6 +117,6 @@ void lift_control() {
       set_lift_state(UP);
   }
 
-  if (master.get_digital(DIGITAL_L2))
+  if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2))
     set_lift_state(MID);
 }

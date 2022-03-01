@@ -48,6 +48,7 @@
 #include "lift.hpp"
 #include "superdougie.hpp"
 #include "claw.hpp"
+#include "shtick.hpp"
 // . . .
 
 /**
