@@ -1,73 +1,31 @@
 #include "main.h"
-#include "superdougie.hpp"
 
-
-/////
-// For instalattion, upgrading, documentations and tutorials, check out website!
-// https://ez-robotics.github.io/EZ-Template/
-/////
-
-
-const int DRIVE_SPEED = 110; // This is 110/127 (around 87% of max speed).  We don't suggest making this 127.
-                             // If this is 127 and the robot tries to heading correct, it's only correcting by
-                             // making one side slower.  When this is 87%, it's correcting by making one side
-                             // faster and one side slower, giving better heading correction.
-const int TURN_SPEED  = 90;
+// Speeds used throughout the code
+const int DRIVE_SPEED = 110;  // This is 110/127 (around 87% of max speed).  We don't suggest making this 127.
+                              // If this is 127 and the robot tries to heading correct, it's only correcting by
+                              // making one side slower.  When this is 87%, it's correcting by making one side
+                              // faster and one side slower, giving better heading correction.
+const int TURN_SPEED = 90;
 const int SWING_SPEED = 90;
 
-
-
-///
-// Constants
-///
-
-// It's best practice to tune constants when the robot is empty and with heavier game objects, or with lifts up vs down.
-// If the objects are light or the cog doesn't change much, then there isn't a concern here.
-
+// Default constants 
 void default_constants() {
-  chassis.set_slew_min_power(80, 80);
-  chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
-  chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
-  chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-}
-
-void one_mogo_constants() {
-  chassis.set_slew_min_power(80, 80);
-  chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
-  chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
-  chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-}
-
-void two_mogo_constants() {
-  chassis.set_slew_min_power(80, 80);
-  chassis.set_slew_distance(7, 7);
-  chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
-  chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
-  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
-  chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
-}
-
-void exit_condition_defaults() {
   chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
+
+  chassis.set_slew_min_power(80, 80);
+  chassis.set_slew_distance(7, 7);
+  chassis.set_pid_constants(&chassis.headingPID, 11, 0, 20, 0);
+  chassis.set_pid_constants(&chassis.forward_drivePID, 0.45, 0, 5, 0);
+  chassis.set_pid_constants(&chassis.backward_drivePID, 0.45, 0, 5, 0);
+  chassis.set_pid_constants(&chassis.turnPID, 5, 0.003, 35, 15);
+  chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
 }
 
-void modified_exit_condition() {
-  chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
-  chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
-  chassis.set_exit_condition(chassis.drive_exit, 80, 50, 300, 150, 500, 500);
-}
-
-void tug (int attempts) {
-  for (int i=0; i<attempts-1; i++) {
+// Tug of war 
+void tug(int attempts) {
+  for (int i = 0; i < attempts - 1; i++) {
     // Attempt to drive backwards
     chassis.set_drive_pid(-12, 127);
     chassis.wait_drive();
@@ -87,13 +45,8 @@ void tug (int attempts) {
 
 
 
-
-
-
-
-
+// Steal 2 neutral goals, aim for center, starts under plat up
 void double_steal() {
-
   // Drive towards center goal
   chassis.set_drive_pid(60, 127);
   chassis.wait_until(45);
@@ -122,13 +75,13 @@ void double_steal() {
     tug(5);
     return;
   }
-  
-  sd_state_2();
+
+  set_dougie_state(2);
   pros::delay(100);
 
   chassis.set_swing_pid(ez::RIGHT_SWING, -190, SWING_SPEED);
   pros::delay(100);
-  sd_state_3();
+  set_dougie_state(3);
   chassis.wait_drive();
 
   if (chassis.interfered) {
@@ -154,13 +107,11 @@ void double_steal() {
 
   chassis.set_turn_pid(-342, TURN_SPEED);
   chassis.wait_drive();
-
 }
 
 
-
+// Steals one neutral goal from plat up
 void steal_one() {
-
   // Drive towards center goal
   chassis.set_drive_pid(60, 127);
   chassis.wait_until(38);
@@ -177,7 +128,7 @@ void steal_one() {
     return;
   }
 
-  //chassis.set_swing_pid(ez::LEFT_SWING, -90, SWING_SPEED);
+  // chassis.set_swing_pid(ez::LEFT_SWING, -90, SWING_SPEED);
   chassis.set_turn_pid(-90, TURN_SPEED);
   chassis.wait_drive();
 
@@ -185,19 +136,18 @@ void steal_one() {
   chassis.wait_drive();
 
   pros::delay(100);
-  sd_state_2();
+  set_dougie_state(2);
   pros::delay(100);
 
   chassis.set_turn_pid(0, TURN_SPEED);
-  sd_state_3();
+  set_dougie_state(3);
   chassis.wait_drive();
-
 }
 
 
 
+// Steals one neutral goal from plat down
 void plat_down_center() {
-
   // Drive towards center goal
   chassis.set_drive_pid(60, 127);
   chassis.wait_until(40);
@@ -221,11 +171,11 @@ void plat_down_center() {
   chassis.wait_drive();
 
   pros::delay(100);
-  sd_state_2();
+  set_dougie_state(2);
   pros::delay(100);
 
   chassis.set_drive_pid(12, DRIVE_SPEED, true);
-  sd_state_3();
+  set_dougie_state(3);
   chassis.wait_drive();
 
   chassis.set_turn_pid(-10, TURN_SPEED);
@@ -233,5 +183,4 @@ void plat_down_center() {
 
   chassis.set_drive_pid(12, DRIVE_SPEED, true);
   chassis.wait_drive();
-
 }

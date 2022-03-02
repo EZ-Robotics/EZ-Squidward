@@ -1,33 +1,42 @@
 #include "main.h"
-#include "pros/adi.hpp"
 
 using namespace ez;
 
+// Variables used lower in the code
 const int SLOW_SPEED = 80;
 const int FAST_SPEED = 127;
 
+// PID creation using EZ-Template PID class
 PID r_liftPID{4, 0, 0, 0, "Right Lift"};
 PID l_liftPID{4, 0, 0, 0, "Left Lift"};
+
+// Motor creation
 pros::Motor r_lift_motor(1, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES);
 pros::Motor l_lift_motor(10, MOTOR_GEARSET_18, false, MOTOR_ENCODER_DEGREES);
+
+// Max speed the lift can travel at
 int lift_max_speed = 127;
 void set_lift_speed(int input) { lift_max_speed = abs(input); }
 
+// Set lift to voltage
 void set_lift(int left, int right) {
   r_lift_motor = right;
   l_lift_motor = left;
 }
 
+// Reset lift sensors
 void reset_lift() {
   l_lift_motor.tare_position();
   r_lift_motor.tare_position();
 }
 
+// Exit conditions for PID to know when it's arrived at destination
 void set_lift_exit() {
   r_liftPID.set_exit_condition(80, 20, 300, 50, 500, 500);
   l_liftPID.set_exit_condition(80, 20, 300, 50, 500, 500);
 }
 
+// Prints current state of lift to terminal
 std::string lift_state_to_string(lift_state input) {
   switch (input) {
     case FAST_DOWN:
@@ -48,6 +57,8 @@ std::string lift_state_to_string(lift_state input) {
   }
 }
 
+// Set lift state.  This makes setting the lift to specific positions easier,
+// using words instead of numbers and dealing with specific logic for each state.
 lift_state current_lift_state;
 void set_lift_state(lift_state input) {
   set_lift_speed(current_lift_state > input ? SLOW_SPEED : FAST_SPEED);
@@ -57,17 +68,22 @@ void set_lift_state(lift_state input) {
   std::cout << "\nNew Lift State: " << lift_state_to_string(input);
 }
 
+// This function always runs in the background and deals with controlling the lift.
 void liftTask() {
   double l_output = 0, r_output = 0;
   long timer = 0;
   bool did_reset = false;
   while (true) {
+    // Current left and right sensors
     double l_current = l_lift_motor.get_position();
     double r_current = r_lift_motor.get_position();
 
+    // Computes PID and clips the speed to max speed
     double l_clipped_pid = util::clip_num(l_liftPID.compute(l_current), lift_max_speed, -lift_max_speed);
     double r_clipped_pid = util::clip_num(r_liftPID.compute(r_current), lift_max_speed, -lift_max_speed);
 
+    // Instead of using PID to come down, the robot will set the lift to some power and when the velocity of the motor is 0
+    // (the motor is at the bottom), will reset the encoders so the PID will continue to work.
     if (current_lift_state == DOWN || current_lift_state == FAST_DOWN) {
       if (l_current >= 13 || r_current >= 13) {
         l_output = l_clipped_pid;
@@ -103,13 +119,16 @@ void liftTask() {
 }
 pros::Task lift_task(liftTask);
 
+// Blocking function for the lift during autonomous
 void wait_lift() {
   while (r_liftPID.exit_condition(r_lift_motor, true) == ez::RUNNING) {
     pros::delay(ez::util::DELAY_TIME);
   }
 }
 
+// This is ran in usercontrol to control the lift
 void lift_control() {
+  // L1 is a toggle for full up / down
   if (master.get_digital_new_press(DIGITAL_L1)) {
     if (current_lift_state == UP || current_lift_state == MID)
       set_lift_state(DOWN);
@@ -117,6 +136,7 @@ void lift_control() {
       set_lift_state(UP);
   }
 
+  // If the shift key (L2) and toggle are pressed, lift will go to middle height
   if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2))
     set_lift_state(MID);
 }

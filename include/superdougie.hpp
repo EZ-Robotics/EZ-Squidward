@@ -1,14 +1,7 @@
 #pragma once
 
-inline int current_state = 1;
+inline int current_dougie_state = 1;
 
-void dougie_claw_up();
-void dougie_claw_down();
-void dougie_tilt_up();
-void dougie_tilt_down();
-
-void sd_state_1();
-void sd_state_2();
-void sd_state_3();
+void set_dougie_state(int state);
 
 void dougie_control();

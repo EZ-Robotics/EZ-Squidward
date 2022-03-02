@@ -1,9 +1,9 @@
 # EZ-Squilliam
-### This is a scrimmage robot that uses EZ-Template.
 
-This code uses the PID class to control the lift and mogo.  The drive uses the chassis class.  
+### This was Squidward's repository, until we killed him and birthed his superior, Squilliam. 
 
-[Photo Album](https://photos.app.goo.gl/FFQo3ijuPFb9XukG9)
+![](squilliam.jpg)
 
-## EZ-Template
-[Find out more about EZ-Template here](https://ez-robotics.github.io/EZ-Template).
+## [Photo Album](https://photos.app.goo.gl/FFQo3ijuPFb9XukG9)
+
+## [Find out more about EZ-Template here](https://ez-robotics.github.io/EZ-Template)

@@ -72,6 +72,10 @@ void initialize() {
   set_lift_exit();
   set_lift_state(FAST_DOWN);
 
+  // Pneumatics to default in size state
+  claw_down();
+  shtick_up();
+
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
   // chassis.set_left_curve_buttons (pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT); // If using tank, only the left side is used. 
   // chassis.set_right_curve_buttons(pros::E_CONTROLLER_DIGITAL_Y,    pros::E_CONTROLLER_DIGITAL_A);
@@ -130,13 +134,14 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-  claw_up();
-  sd_state_1();
-  set_lift_state(FAST_DOWN);
   chassis.reset_pid_targets(); // Resets PID targets to 0
   chassis.reset_gyro(); // Reset gyro position to 0
   chassis.reset_drive_sensor(); // Reset drive sensors to 0
   chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
+  claw_up();
+  set_dougie_state(1);
+  shtick_up();
+  set_lift_state(FAST_DOWN);
 
 
   ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
@@ -160,6 +165,8 @@ void autonomous() {
 void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
+
+  if (current_dougie_state == 1) set_dougie_state(1);
 
   while (true) {
 
