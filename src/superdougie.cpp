@@ -45,11 +45,15 @@ void set_dougie_state(int state) {
 
 // This is ran in usercontrol to control the lift
 void dougie_control() {
-  // When R1 is pressed and shift (L2) is NOT pressed, increase the current state.
-  // Wrap current state around NO_OF_STATES
-  if (master.get_digital_new_press(DIGITAL_R2) && !master.get_digital(DIGITAL_L2)) {
-    current_dougie_state++;
+  // R2 moves through the dougie states increasingly.  Shift (L2) and R2 go backwards. 
+  if (master.get_digital_new_press(DIGITAL_R2)) {
+
+    int add = master.get_digital(DIGITAL_L2) ? -1 : 1;
+    current_dougie_state += add;
+
     if (current_dougie_state > NO_OF_STATES) current_dougie_state = 1;
+    if (current_dougie_state < 1) current_dougie_state = NO_OF_STATES;
+
     set_dougie_state(current_dougie_state);
   }
 }
