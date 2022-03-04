@@ -2,8 +2,9 @@
 #include "api.h"
 
 enum lift_state {
-  FAST_DOWN = -1,
   DOWN = 0,
+  FAST_DOWN = 1,
+  SLIGHT_RAISE = 75,
   MID = 260,
   UP = 330
 };

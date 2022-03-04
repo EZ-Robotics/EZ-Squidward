@@ -85,7 +85,7 @@ void liftTask() {
     // Instead of using PID to come down, the robot will set the lift to some power and when the velocity of the motor is 0
     // (the motor is at the bottom), will reset the encoders so the PID will continue to work.
     if (current_lift_state == DOWN || current_lift_state == FAST_DOWN) {
-      if (l_current >= 13 || r_current >= 13) {
+      if (l_current >= 20 || r_current >= 20) {
         l_output = l_clipped_pid;
         r_output = r_clipped_pid;
       } else {
@@ -98,7 +98,7 @@ void liftTask() {
           did_reset = true;
           timer = 250;
         } else {
-          int speed = current_lift_state == DOWN ? -50 : -100;
+          int speed = current_lift_state == DOWN ? -50 : -90;
           l_output = speed;
           r_output = speed;
         }
@@ -130,7 +130,7 @@ void wait_lift() {
 void lift_control() {
   // L1 is a toggle for full up / down
   if (master.get_digital_new_press(DIGITAL_L1)) {
-    if (current_lift_state == UP || current_lift_state == MID)
+    if (current_lift_state == UP || current_lift_state == MID || current_lift_state == SLIGHT_RAISE)
       set_lift_state(DOWN);
     else
       set_lift_state(UP);

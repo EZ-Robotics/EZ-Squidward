@@ -143,7 +143,6 @@ void autonomous() {
   shtick_up();
   set_lift_state(FAST_DOWN);
 
-
   ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
 }
 
