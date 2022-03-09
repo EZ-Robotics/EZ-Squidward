@@ -4,14 +4,24 @@
 
 extern Drive chassis;
 
-void double_steal();
-void steal_one();
-void plat_down_center_hit();
-void plat_down_center();
-void dislike_you_lucas();
+enum lift_movement { NONE = 0,
+                     L_TWIST = 1,
+                     R_TWIST = 2,
+                     RAISE = 3
+};
 
 void default_constants();
-void one_mogo_constants();
-void two_mogo_constants();
-void exit_condition_defaults();
-void modified_exit_condition(); 
+
+void double_steal();
+
+void plat_up_center_raw(lift_movement input);
+void plat_up_center();
+void plat_up_center_l_twist();
+void plat_up_center_r_twist();
+void plat_up_center_raise();
+
+void plat_down_center_raw(lift_movement input);
+void plat_down_center();
+void plat_down_center_l_twist();
+void plat_down_center_r_twist();
+void plat_down_center_raise();

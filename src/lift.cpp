@@ -9,6 +9,8 @@ const int FAST_SPEED = 127;
 // PID creation using EZ-Template PID class
 PID r_liftPID{4, 0, 0, 0, "Right Lift"};
 PID l_liftPID{4, 0, 0, 0, "Left Lift"};
+PID equalizerPID{1, 0, 3, 0, "Lift Equalizer"};  // Makes sure the left and right side go the same speed up
+bool is_equalizing = true;
 
 // Motor creation
 pros::Motor r_lift_motor(1, MOTOR_GEARSET_18, true, MOTOR_ENCODER_DEGREES);
@@ -39,11 +41,20 @@ void set_lift_exit() {
 // Prints current state of lift to terminal
 std::string lift_state_to_string(lift_state input) {
   switch (input) {
+    case DOWN:
+      return "Down";
+      break;
     case FAST_DOWN:
       return "Fast Down";
       break;
-    case DOWN:
-      return "Down";
+    case SLIGHT_RAISE:
+      return "Slight Raise";
+      break;
+    case RIGHT_TWIST:
+      return "Right Twist";
+      break;
+    case LEFT_TWIST:
+      return "Left Twist";
       break;
     case MID:
       return "Mid";
@@ -59,12 +70,22 @@ std::string lift_state_to_string(lift_state input) {
 
 // Set lift state.  This makes setting the lift to specific positions easier,
 // using words instead of numbers and dealing with specific logic for each state.
-lift_state current_lift_state;
 void set_lift_state(lift_state input) {
   set_lift_speed(current_lift_state > input ? SLOW_SPEED : FAST_SPEED);
   current_lift_state = input;
-  r_liftPID.set_target(input);
-  l_liftPID.set_target(input);
+  if (input == LEFT_TWIST) {
+    r_liftPID.set_target(0);
+    l_liftPID.set_target(LEFT_TWIST);
+    is_equalizing = false;
+  } else if (input == RIGHT_TWIST) {
+    r_liftPID.set_target(RIGHT_TWIST);
+    l_liftPID.set_target(0);
+    is_equalizing = false;
+  } else {
+    r_liftPID.set_target(input);
+    l_liftPID.set_target(input);
+    is_equalizing = true;
+  }
   std::cout << "\nNew Lift State: " << lift_state_to_string(input);
 }
 
@@ -78,9 +99,13 @@ void liftTask() {
     double l_current = l_lift_motor.get_position();
     double r_current = r_lift_motor.get_position();
 
+    // Set current to left current
+    equalizerPID.set_target(l_current);
+
     // Computes PID and clips the speed to max speed
     double l_clipped_pid = util::clip_num(l_liftPID.compute(l_current), lift_max_speed, -lift_max_speed);
     double r_clipped_pid = util::clip_num(r_liftPID.compute(r_current), lift_max_speed, -lift_max_speed);
+    double equalizer_output = is_equalizing ? equalizerPID.compute(r_current) : 0;  // Compute using right current
 
     // Instead of using PID to come down, the robot will set the lift to some power and when the velocity of the motor is 0
     // (the motor is at the bottom), will reset the encoders so the PID will continue to work.
@@ -98,7 +123,7 @@ void liftTask() {
           did_reset = true;
           timer = 250;
         } else {
-          int speed = current_lift_state == DOWN ? -50 : -90;
+          int speed = current_lift_state == DOWN ? -50 : -100;
           l_output = speed;
           r_output = speed;
         }
@@ -112,7 +137,8 @@ void liftTask() {
 
     if (pros::competition::is_disabled()) timer = 0;
 
-    set_lift(l_output, r_output);
+    // Set lift to output, but speed up the slow side / slow down the fast side
+    set_lift(l_output - equalizer_output, r_output + equalizer_output);
 
     pros::delay(util::DELAY_TIME);
   }
@@ -130,13 +156,21 @@ void wait_lift() {
 void lift_control() {
   // L1 is a toggle for full up / down
   if (master.get_digital_new_press(DIGITAL_L1)) {
-    if (current_lift_state == UP || current_lift_state == MID || current_lift_state == SLIGHT_RAISE)
+    if (current_lift_state == UP || current_lift_state == MID || current_lift_state == SLIGHT_RAISE || current_lift_state == LEFT_TWIST || current_lift_state == RIGHT_TWIST)
       set_lift_state(DOWN);
     else
       set_lift_state(UP);
   }
 
   // If the shift key (L2) and toggle are pressed, lift will go to middle height
-  if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_L2))
+  if (master.get_digital(DIGITAL_L1) && master.get_digital_new_press(DIGITAL_L2))
     set_lift_state(MID);
+
+  // Twisty right
+  else if (master.get_digital_new_press(DIGITAL_A))
+    set_lift_state(RIGHT_TWIST);
+
+  // Twisty left
+  else if (master.get_digital_new_press(DIGITAL_LEFT))
+    set_lift_state(LEFT_TWIST);
 }

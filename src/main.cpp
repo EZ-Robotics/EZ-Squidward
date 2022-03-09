@@ -84,9 +84,15 @@ void initialize() {
   std::string up = "\n\n\nStarting: Plat Up";
   std::string down = "\n\n\nStarting: Plat Down";
   ez::as::auton_selector.add_autons({
+    Auton("\nCenter Rush\nNO LIFT"+up, plat_up_center),
+    Auton("\nCenter Rush\nL TWIST"+up, plat_up_center_l_twist),
+    Auton("\nCenter Rush\nR TWIST"+up, plat_up_center_r_twist),
+    Auton("\nCenter Rush\nRAISE"+up, plat_up_center_raise),
+    Auton("\nCenter Rush\nNO LIFT"+down, plat_down_center),
+    Auton("\nCenter Rush\nL TWIST"+down, plat_down_center_l_twist),
+    Auton("\nCenter Rush\nR TWIST"+down, plat_down_center_r_twist),
+    Auton("\nCenter Rush\nRAISE"+down, plat_down_center_raise),
     Auton("\nDouble Center Steal"+up, double_steal), 
-    Auton("\nCenter Rush"+down, plat_down_center),
-    Auton("\nCenter Rush"+up, steal_one),
   });
 
   // Initialize chassis and auton selector
@@ -166,6 +172,7 @@ void opcontrol() {
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
 
   if (current_dougie_state == 1) set_dougie_state(1);
+  if (current_lift_state == LEFT_TWIST || current_lift_state == RIGHT_TWIST) set_lift_state(DOWN);
 
   while (true) {
 

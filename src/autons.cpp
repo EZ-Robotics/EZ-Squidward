@@ -1,3 +1,4 @@
+#include "lift.hpp"
 #include "main.h"
 
 // Speeds used throughout the code
@@ -8,7 +9,7 @@ const int DRIVE_SPEED = 110;  // This is 110/127 (around 87% of max speed).  We 
 const int TURN_SPEED = 90;
 const int SWING_SPEED = 90;
 
-// Default constants 
+// Default constants
 void default_constants() {
   chassis.set_exit_condition(chassis.turn_exit, 100, 3, 500, 7, 500, 500);
   chassis.set_exit_condition(chassis.swing_exit, 100, 3, 500, 7, 500, 500);
@@ -23,7 +24,7 @@ void default_constants() {
   chassis.set_pid_constants(&chassis.swingPID, 7, 0, 45, 0);
 }
 
-// Tug of war 
+// Tug of war
 void tug(int attempts) {
   for (int i = 0; i < attempts - 1; i++) {
     // Attempt to drive backwards
@@ -43,7 +44,21 @@ void tug(int attempts) {
   }
 }
 
-
+void set_lift_auto(lift_movement input) {
+  switch (input) {
+    case L_TWIST:
+      set_lift_state(LEFT_TWIST);
+      break;
+    case R_TWIST:
+      set_lift_state(RIGHT_TWIST);
+      break;
+    case RAISE:
+      set_lift_state(SLIGHT_RAISE);
+      break;
+    default:
+      break;
+  }
+}
 
 // Steal 2 neutral goals, aim for center, starts under plat up
 void double_steal() {
@@ -109,16 +124,19 @@ void double_steal() {
   chassis.wait_drive();
 }
 
-
 // Steals one neutral goal from plat up
-void steal_one() {
+void plat_up_center_raw(lift_movement input) {
   // Drive towards center goal
   chassis.set_drive_pid(60, 127);
+  chassis.wait_until(33);
+  chassis.set_max_speed(40);
   chassis.wait_until(38);
   claw_down();
 
   // Drive back with goal
   chassis.set_drive_pid(-26.5, 127);
+  pros::delay(100);
+  set_lift_auto(input);
   chassis.wait_until(-10);
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
@@ -128,11 +146,12 @@ void steal_one() {
     return;
   }
 
-  // chassis.set_swing_pid(ez::LEFT_SWING, -90, SWING_SPEED);
+  set_lift_state(DOWN);
+
   chassis.set_turn_pid(-90, TURN_SPEED);
   chassis.wait_drive();
 
-  chassis.set_drive_pid(-15, 60);
+  chassis.set_drive_pid(-20, 60);
   chassis.wait_drive();
 
   pros::delay(100);
@@ -144,17 +163,24 @@ void steal_one() {
   chassis.wait_drive();
 }
 
-
+void plat_up_center() { plat_up_center_raw(NONE); }
+void plat_up_center_l_twist() { plat_up_center_raw(L_TWIST); }
+void plat_up_center_r_twist() { plat_up_center_raw(R_TWIST); }
+void plat_up_center_raise() { plat_up_center_raw(RAISE); }
 
 // Steals one neutral goal from plat down
-void plat_down_center() {
+void plat_down_center_raw(lift_movement input) {
   // Drive towards center goal
   chassis.set_drive_pid(60, 127);
+  chassis.wait_until(35);
+  chassis.set_max_speed(40);
   chassis.wait_until(40);
   claw_down();
 
   // Drive back with goal
   chassis.set_drive_pid(-33, 127);
+  pros::delay(200);
+  set_lift_auto(input);
   chassis.wait_until(-20);
   chassis.set_max_speed(DRIVE_SPEED);
   chassis.wait_drive();
@@ -163,6 +189,8 @@ void plat_down_center() {
     tug(5);
     return;
   }
+
+  set_lift_state(DOWN);
 
   chassis.set_swing_pid(ez::LEFT_SWING, -55, SWING_SPEED);
   chassis.wait_drive();
@@ -184,3 +212,8 @@ void plat_down_center() {
   chassis.set_drive_pid(12, DRIVE_SPEED, true);
   chassis.wait_drive();
 }
+
+void plat_down_center() { plat_up_center_raw(NONE); }
+void plat_down_center_l_twist() { plat_up_center_raw(L_TWIST); }
+void plat_down_center_r_twist() { plat_up_center_raw(R_TWIST); }
+void plat_down_center_raise() { plat_up_center_raw(RAISE); }
