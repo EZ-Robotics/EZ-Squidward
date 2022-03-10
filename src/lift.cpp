@@ -138,7 +138,8 @@ void liftTask() {
     if (pros::competition::is_disabled()) timer = 0;
 
     // Set lift to output, but speed up the slow side / slow down the fast side
-    set_lift(l_output - equalizer_output, r_output + equalizer_output);
+    // set_lift(l_output - equalizer_output, r_output + equalizer_output);
+    set_lift(l_output, r_output);
 
     pros::delay(util::DELAY_TIME);
   }
